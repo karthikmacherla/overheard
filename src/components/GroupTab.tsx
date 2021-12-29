@@ -7,18 +7,26 @@ import {
   Flex,
   Heading,
   useColorModeValue,
-  Text
+  Text,
+  Spacer
 } from '@chakra-ui/react'
 
 import {
-  ChevronRightIcon,
+  AddIcon,
+  ChevronRightIcon, LinkIcon,
 } from '@chakra-ui/icons';
 
+import RoundButton from './Shared/RoundButton';
+import AddGroupModal from './AddGroupModal';
 
 function GroupTab() {
   return (
     <Flex p={3} h="100%" flex={{ base: 1 }} flexDirection={'column'}>
-      <Heading mb={1}>Group</Heading>
+      <Flex alignItems={'center'} >
+        <Heading mb={1}>Group</Heading>
+        <Spacer />
+        <AddGroupModal />
+      </Flex>
       <Stack >
         {GROUP_ITEMS.map((item) => (
           <GroupItem key={item.label} {...item} />

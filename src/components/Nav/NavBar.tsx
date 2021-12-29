@@ -16,14 +16,25 @@ import {
   HamburgerIcon,
   CloseIcon,
   ChevronDownIcon,
+  AddIcon,
 } from '@chakra-ui/icons';
 
-export default function NavBar() {
+import AddBar from './AddBar';
+import SplashNav from './SplashNav';
+import LoggedInNav from './LoggedInNav';
+
+interface NavProps {
+  group?: string
+  addBar?: JSX.Element,
+  right?: JSX.Element,
+}
+
+function NavBar(props: NavProps) {
   const { isOpen, onToggle } = useDisclosure();
   return (
     <Box>
       <Flex
-        bg={useColorModeValue('white', 'gray.800')}
+        bg={useColorModeValue('gray.300', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
         minH={'60px'}
         py={{ base: 4 }}
@@ -51,39 +62,15 @@ export default function NavBar() {
             Logo
           </Text>
         </Flex>
-        <Flex flex={{ base: 1 }} justify={'flex-end'} alignItems={'center'} mr={4}>
-          <DesktopNav />
+        <Flex flex={{ base: 1 }} mx={3} justify={'center'} alignItems={'center'}>
+          {props.addBar}
         </Flex>
         <Stack
           flex={{ base: 1, md: 0 }}
           justify={'flex-end'}
           direction={'row'}
           spacing={6}>
-          <Button
-            variant={'link'}
-            p={2}
-            href={'/signin'}
-            fontSize={'sm'}
-            fontWeight={500}
-            color={useColorModeValue('gray.600', 'gray.200')}
-            _hover={{
-              textDecoration: 'none',
-              color: useColorModeValue('red.300', 'white'),
-            }}>
-            Sign In
-          </Button>
-          <Button
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            color={'white'}
-            bg={'red.400'}
-            href={'#'}
-            _hover={{
-              bg: 'red.300',
-            }}>
-            Sign Up
-          </Button>
+          {props.right}
         </Stack>
       </Flex>
 
@@ -191,4 +178,16 @@ interface NavItem {
 }
 
 const NAV_ITEMS: Array<NavItem> = [
+  // {
+  //   label: 'Login',
+  //   href: '#',
+  // },
+  // {
+  //   label: 'Signup',
+  //   href: '#',
+  // },
 ];
+
+export {
+  AddBar, LoggedInNav, NavBar, SplashNav
+}

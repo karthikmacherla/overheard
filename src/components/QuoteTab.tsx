@@ -7,13 +7,21 @@ import {
   Image,
   Grid,
   GridItem,
-  Box
+  Box,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td
 } from '@chakra-ui/react'
 
 import {
   ChatIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CloseIcon,
   LinkIcon,
 } from '@chakra-ui/icons';
 
@@ -23,9 +31,11 @@ import {
 
 
 interface QProps {
+  group_id?: string
 }
 
 interface QState {
+  group_id?: string,
   showingQuote: boolean,
   quotes: Array<Quote>;
   idx: number,
@@ -40,7 +50,7 @@ interface Quote {
 
 interface Comment {
   message: string,
-  time: Date
+  time?: Date
 }
 
 // list of quotes
@@ -52,16 +62,18 @@ class QuoteTab extends React.Component<QProps, QState> {
     super(props);
 
     this.state = {
+      group_id: props.group_id,
       showingQuote: true,
       quotes: QUOTES, // define typescript interface here
       idx: 0,
       fontSize: 5,
-      comments_idx: []
+      comments_idx: COMMENTS
     }
 
     this.handleArrowKeys = this.handleArrowKeys.bind(this);
     this.nextSlide = this.nextSlide.bind(this);
     this.prevSlide = this.prevSlide.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   prevSlide() {
@@ -76,7 +88,15 @@ class QuoteTab extends React.Component<QProps, QState> {
     }
   }
 
+  handleClose() {
+    this.setState({ showingQuote: !this.state.showingQuote })
+  }
+
   handleArrowKeys(event: KeyboardEvent) {
+    if (!this.state.showingQuote) {
+      //only works when displaying quote
+      return;
+    }
     if (event.key === 'ArrowLeft') {
       this.prevSlide();
     } else if (event.key === 'ArrowRight') {
@@ -89,6 +109,15 @@ class QuoteTab extends React.Component<QProps, QState> {
   }
   componentWillUnmount() {
     document.removeEventListener("keydown", this.handleArrowKeys, false);
+  }
+
+  componentDidUpdate(prevProps: QProps, prevState: QState) {
+    //group id has been changed?
+    if (this.state.group_id === prevState.group_id) {
+      return;
+    }
+
+    //requery and update state here
   }
 
   render(): React.ReactNode {
@@ -114,7 +143,7 @@ class QuoteTab extends React.Component<QProps, QState> {
             </Flex>
           </GridItem>
           {/* Share buttons */}
-          <GridItem colStart={15}><CommentButton /></GridItem>
+          <GridItem colStart={15}><CommentButton handle={this.handleClose} /></GridItem>
           <GridItem colStart={15} ><ShareButton /></GridItem>
           <GridItem colStart={15} ><LikeButton /></GridItem>
 
@@ -135,14 +164,48 @@ class QuoteTab extends React.Component<QProps, QState> {
       )
     } else {
       // Show comment block
-
-      <></>
+      return (
+        <Grid
+          templateRows='repeat(11, 1fr)'
+          templateColumns='repeat(15, 1fr)'
+          m={5}
+          role={'group'}
+        >
+          <GridItem rowStart={1} rowEnd={12} colStart={1} colEnd={16} >
+            <Box overflow={'hidden'} overflowY={'scroll'} h={'lg'}>
+              <Table variant='simple' size={'lg'}>
+                <Tbody>
+                  {this.state.comments_idx.map((c, ind) => {
+                    return (
+                      <Tr>
+                        <Td>{c.message}</Td>
+                      </Tr>
+                    )
+                  })}
+                </Tbody>
+              </Table>
+            </Box>
+          </GridItem>
+          <GridItem rowStart={1} colStart={15}><CloseButton handle={this.handleClose} /></GridItem>
+        </Grid>
+      )
     }
   }
 }
 
+function CloseButton({ handle }: { handle: () => void }) {
+  return (
+    <Button
+      rounded={'full'}
+      bg={'red.400'}
+      color={'white'}
+      onClick={handle}>
+      <CloseIcon />
+    </Button>
+  )
+}
 
-function CommentButton() {
+function CommentButton({ handle }: { handle: () => void }) {
   return (
     <Button
       transition={'all .3s ease'}
@@ -150,7 +213,8 @@ function CommentButton() {
       _groupHover={{ opacity: '100%' }}
       rounded={'full'}
       bg={'red.400'}
-      color={'white'}>
+      color={'white'}
+      onClick={handle}>
       <ChatIcon />
     </Button>
   )
@@ -215,6 +279,25 @@ function RightButton({ handle }: { handle: () => void }) {
 const QUOTES: Array<Quote> = [
   {
     message: "This is a very cool way to talk to people anonymously"
+  },
+  {
+    message: "Heyo"
+  }
+]
+
+
+const QUOTES2: Array<Quote> = [
+  {
+    message: "This is a very cool way to talk to people anonymously"
+  },
+  {
+    message: "Heyo"
+  }
+]
+
+const COMMENTS: Array<Comment> = [
+  {
+    message: "This is a very cool way to talk to people anonymously. There is a lot of text to unpack so we can see what happens in this event."
   },
   {
     message: "Heyo"
