@@ -1,23 +1,13 @@
-import React from 'react';
 import {
-  Box,
-  Link,
-  Stack,
-  Icon,
-  Flex,
-  Heading,
-  useColorModeValue,
-  Text,
-  Spacer
-} from '@chakra-ui/react'
-
-import {
-  AddIcon,
-  ChevronRightIcon, LinkIcon,
+  ChevronRightIcon
 } from '@chakra-ui/icons';
-
-import RoundButton from './Shared/RoundButton';
+import {
+  Box, Flex,
+  Heading, Icon, Link, Spacer, Stack, Text, useColorModeValue
+} from '@chakra-ui/react';
 import AddGroupModal from './AddGroupModal';
+
+
 
 function GroupTab() {
   return (
@@ -29,14 +19,14 @@ function GroupTab() {
       </Flex>
       <Stack >
         {GROUP_ITEMS.map((item) => (
-          <GroupItem key={item.label} {...item} />
+          <GroupItemRow key={item.label} {...item} />
         ))}
       </Stack>
     </Flex>
   )
 }
 
-const GroupItem = ({ label, href, subLabel }: GroupItem) => {
+const GroupItemRow = ({ label, href, subLabel }: GroupItem) => {
   return (
     <Link
       href={href}

@@ -27,7 +27,6 @@ class App extends React.Component<any, AppState> {
         name: "Karthik Macherla"
       }
     }
-
   }
 
   render() {

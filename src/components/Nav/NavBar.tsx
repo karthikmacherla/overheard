@@ -1,27 +1,14 @@
 import {
-  Box,
-  Flex,
-  Text,
-  IconButton,
-  Button,
-  Stack,
-  Collapse,
-  Icon,
-  Link,
-  useColorModeValue,
-  useBreakpointValue,
-  useDisclosure,
-} from '@chakra-ui/react';
-import {
-  HamburgerIcon,
-  CloseIcon,
-  ChevronDownIcon,
-  AddIcon,
+  ChevronDownIcon, CloseIcon, HamburgerIcon
 } from '@chakra-ui/icons';
-
+import {
+  Box, Collapse, Flex, Icon, IconButton, Link, Stack, Text,
+  useBreakpointValue, useColorModeValue, useDisclosure
+} from '@chakra-ui/react';
 import AddBar from './AddBar';
-import SplashNav from './SplashNav';
 import LoggedInNav from './LoggedInNav';
+import SplashNav from './SplashNav';
+
 
 interface NavProps {
   group?: string
@@ -80,32 +67,6 @@ function NavBar(props: NavProps) {
     </Box >
   );
 }
-
-const DesktopNav = () => {
-  const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const linkHoverColor = useColorModeValue('red.300', 'white');
-
-  return (
-    <Stack direction={'row'} spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label} display={'inline-block'}>
-          <Link
-            p={2}
-            href={navItem.href ?? '#'}
-            fontSize={'sm'}
-            fontWeight={500}
-            color={linkColor}
-            _hover={{
-              textDecoration: 'none',
-              color: linkHoverColor,
-            }}>
-            {navItem.label}
-          </Link>
-        </Box>
-      ))}
-    </Stack>
-  );
-};
 
 const MobileNav = () => {
   return (
@@ -190,4 +151,4 @@ const NAV_ITEMS: Array<NavItem> = [
 
 export {
   AddBar, LoggedInNav, NavBar, SplashNav
-}
+};

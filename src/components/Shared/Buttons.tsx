@@ -29,4 +29,23 @@ function RoundButton(props: {
     </Button>)
 }
 
-export default RoundButton;
+
+function ButtonWText(props: any) {
+  return (
+    <Button
+      display={{ base: 'none', md: 'inline-flex' }}
+      fontWeight={600}
+      color={'white'}
+      bg={'red.400'}
+      _hover={{
+        bg: 'red.300',
+      }}
+      {...props}
+    >
+      {props.children}
+    </Button>
+  )
+}
+
+export { RoundButton, ButtonWText };
+

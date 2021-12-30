@@ -1,25 +1,13 @@
 
 import { AddIcon } from '@chakra-ui/icons';
 import {
-  useDisclosure,
-  Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  ModalFooter,
-  FormControl,
-  FormLabel,
-  Input,
-  FormHelperText,
-  Text,
-  Badge
+  Badge, Button, FormControl, FormHelperText, FormLabel,
+  Input, Modal, ModalBody,
+  ModalCloseButton, ModalContent,
+  ModalHeader, ModalOverlay, useDisclosure
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import RoundButton from './Shared/RoundButton';
-
+import { RoundButton } from './Shared/Buttons';
 
 function AddGroupModal() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -35,7 +23,7 @@ function AddGroupModal() {
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel htmlFor='text'>Group name</FormLabel>
+              <FormLabel htmlFor='group-name'>Group name</FormLabel>
               <Input id='group-name' type='email' />
               <FormHelperText>Your unique organization name.</FormHelperText>
               <br />

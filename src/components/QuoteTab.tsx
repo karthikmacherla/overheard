@@ -1,33 +1,21 @@
-import React from 'react';
-import {
-  Icon,
-  Button,
-  Flex,
-  Heading,
-  Image,
-  Grid,
-  GridItem,
-  Box,
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td
-} from '@chakra-ui/react'
-
 import {
   ChatIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CloseIcon,
-  LinkIcon,
+  LinkIcon
 } from '@chakra-ui/icons';
-
+import {
+  Box, Button,
+  Flex, Grid,
+  GridItem, Heading, Icon, Image, Table, Tbody, Td, Tr
+} from '@chakra-ui/react';
+import React from 'react';
 import {
   FiHeart
 } from 'react-icons/fi';
+
+
 
 
 interface QProps {

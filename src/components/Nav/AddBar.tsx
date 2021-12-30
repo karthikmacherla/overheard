@@ -1,28 +1,15 @@
 import { AddIcon } from '@chakra-ui/icons';
 import {
-  useDisclosure,
-  Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  ModalFooter,
-  FormControl,
-  FormLabel,
-  Input,
-  FormHelperText,
-  Text,
-  Badge,
-  Textarea
+  Badge, Button, FormControl, FormHelperText,
+  FormLabel, Modal, ModalBody, ModalContent, ModalOverlay,
+  Textarea, useDisclosure
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
 
 function AddBar() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [quoteCode, setQuoteCode] = useState("https://potato.com");
+  const [quoteCode, setQuoteCode] = useState("");
 
   return (
     <>
@@ -47,7 +34,7 @@ function AddBar() {
           <ModalBody pb={6}>
             <FormControl>
               <FormLabel htmlFor='text'>Add a quote:</FormLabel>
-              <Textarea></Textarea>
+              <Textarea h={"200px"}></Textarea>
               <br />
               <FormHelperText>Your unique organization name.</FormHelperText>
               <br />
