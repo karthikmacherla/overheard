@@ -22,12 +22,12 @@ ReactDOM.render(
 
         <Router>
           <Routes>
-            {/* <Route
-              path="/"
-              element={<App />}
-            /> */}
             <Route
               path="/"
+              element={<App />}
+            />
+            <Route
+              path="/login"
               element={<LoginTest />}
             />
           </Routes>

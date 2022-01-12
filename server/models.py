@@ -1,6 +1,6 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table
 from sqlalchemy.orm import relationship
-from .database import Base
+from database import Base
 
 # Define all SQL related models here
 association_table = Table('association', Base.metadata,
@@ -26,6 +26,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    profile_pic_url = Column(String, nullable=True)
     name = Column(String, index=True)
     groups = relationship(
         "Group", secondary=association_table, back_populates="users")
