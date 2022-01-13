@@ -41,18 +41,6 @@ class User(UserCreate):
         orm_mode = True
 
 
-class Potato(BaseModel):
-    email: str
-    name: Optional[str] = None
-    profile_pic_url: Optional[str] = None
-    password: str
-    id: int
-    groups: List[Group] = []
-
-    class Config:
-        orm_mode = True
-
-
 class QuoteBase(BaseModel):
     message: str
 
