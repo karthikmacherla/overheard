@@ -16,29 +16,19 @@ from utils import *
 import crud
 import models
 import schemas
-from database import SessionLocal, engine
 import logging
-
-
-logger = create_logger(__name__)
 
 
 models.Base.metadata.create_all(bind=engine)
 
+
+log = create_logger(__name__)
 app = FastAPI()
 config = get_config()
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
 @app.post("/auth/google")
-async def google_login_for_access_token(token: str):
+def google_login_for_access_token(token: str):
     # attempt to decode
     try:
         # Specify the CLIENT_ID of the app that accesses the backend:
@@ -48,6 +38,13 @@ async def google_login_for_access_token(token: str):
             config["GOOGLE_CLIENT_ID"])
 
         userid = idinfo['sub']
+        idinfo = schemas.GoogleInfo(name=idinfo["name"],
+                                    picture=idinfo["picture"],
+                                    given_name=idinfo["given_name"],
+                                    email=idinfo["email"])
+
+        log.info(idinfo)
+
         user = authenticate_google_user(fake_users_db, userid, idinfo)
 
         if not user:
@@ -59,7 +56,7 @@ async def google_login_for_access_token(token: str):
 
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": user.username}, expires_delta=access_token_expires
+            data={"sub": user.email}, expires_delta=access_token_expires
         )
         return JSONResponse({"access_token": access_token, "token_type": "bearer"},
                             headers={'Authorization': f'Bearer {access_token}'})
@@ -85,14 +82,32 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.email}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/users/{user_id}", response_model=schemas.User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user_id=user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+@app.post("/auth/signup", response_model=Token)
+def signup_for_access_token(form_data: UserCreate):
+    db_inst = get_db()
+    user = crud.get_user_by_email(db_inst, form_data.email)
+
+    if user:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="User already exists",
+        )
+    log.info("User does not exist")
+    user = crud.create_user(get_db(), form_data)
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.get("/users", response_model=schemas.User)
+def read_user(db: Session = Depends(get_db),
+              user=Depends(get_current_user)):
+    return user
+# return user

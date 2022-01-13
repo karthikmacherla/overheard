@@ -20,14 +20,14 @@ class Group(Base):
         "User", secondary=association_table, back_populates="groups")
 
 
+# single email. sign up with manual sets a password, otherwise there's a unique one generated
 class User(Base):
     __tablename__ = "users"
-
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
+    password = Column(String)
     profile_pic_url = Column(String, nullable=True)
-    name = Column(String, index=True)
+    name = Column(String, index=True, nullable=True)
     groups = relationship(
         "Group", secondary=association_table, back_populates="users")
 

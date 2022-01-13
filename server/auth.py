@@ -2,40 +2,47 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi import Depends, FastAPI, HTTPException, status
 from jose import JWTError, jwt
 
+from sqlalchemy.orm import Session
+
 from datetime import datetime, timedelta
 from typing import Optional
 
 import crud
+import models
+import logging
 
 from schemas import *
 from utils import *
 
 config = get_config()
+log = create_logger(__name__)
 
 SECRET_KEY = config["JWT_SECRET"]
 ALGORITHM = config["ALGORITHMS"]
-ACCESS_TOKEN_EXPIRE_MINUTES = config["ACCESS_TOKEN_EXPIRE_MINUTES"]
+ACCESS_TOKEN_EXPIRE_MINUTES = int(config["ACCESS_TOKEN_EXPIRE_MINUTES"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/username")
 
 
-def authenticate_user(db, username: str, password: str):
+def authenticate_user(db: Session, username: str, password: str) -> models.User:
+    user = crud.get_user_by_email(db, username)
+    if user and verify_password(password, user.password):
+        return user
+
+
+def authenticate_google_user(db: Session, user_id: str, idinfo: GoogleInfo) -> models.User:
+    gen_pwd = get_hash_from_str(user_id)
     user = crud.get_user_by_email(db, username)
 
-    if not user:
-        return False
-    if not verify_password(password, user.hashed_password):
-        return False
-    return user
-
-
-def authenticate_google_user(db, user_id: str, idinfo):
-    username = get_hash_from_str(user_id)
-    user = crud.get_user_by_email(db, username)
     if not user:
         # create the user with idinfo
-        userObj = User(name=idinfo["name"])
-        user = crud.create_user(db, username, idinfo)
+        userObj = UserCreate(
+            email=idinfo.email,
+            name=idinfo.name,
+            profile_pic_url=idinfo.picture,
+            password=gen_pwd
+        )
+        user = crud.create_user(db, userObj)
     return user
 
 
@@ -58,13 +65,15 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
+        username = payload.get("sub")
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = crud_fake.get_user(fake_users_db, username=token_data.username)
+    user = crud.get_user_by_email(get_db(), token_data.username)
+    log.debug("user", user.email, user.name, user.password)
+
     if user is None:
         raise credentials_exception
     return user

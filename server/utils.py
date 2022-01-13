@@ -1,10 +1,9 @@
 from passlib.context import CryptContext
 import os
-import jwt
 from configparser import ConfigParser
 import logging
 import sys
-
+from database import SessionLocal, engine
 
 logging.basicConfig(filename='server-simplified.log',
                     encoding='utf-8', level=logging.DEBUG)
@@ -59,3 +58,15 @@ def verify_password(plain_password, hashed_password):
 
 def get_hash_from_str(s: str):
     return pwd_context.hash(s)
+
+
+"""DB contacts
+"""
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        return db
+    finally:
+        db.close()

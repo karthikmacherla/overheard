@@ -27,11 +27,26 @@ class UserBase(BaseModel):
     email: str
 
 
-class User(UserBase):
-    id: int
-    name: str
-    hashed_password: str
+class UserCreate(UserBase):
+    name: Optional[str] = None
     profile_pic_url: Optional[str] = None
+    password: str
+
+
+class User(UserCreate):
+    id: int
+    groups: List[Group] = []
+
+    class Config:
+        orm_mode = True
+
+
+class Potato(BaseModel):
+    email: str
+    name: Optional[str] = None
+    profile_pic_url: Optional[str] = None
+    password: str
+    id: int
     groups: List[Group] = []
 
     class Config:
@@ -46,7 +61,7 @@ class QuoteCreate(QuoteBase):
     pass
 
 
-class Quote(QuoteBase):
+class Quote(QuoteCreate):
     time: datetime
     likes: int
     group: Group
