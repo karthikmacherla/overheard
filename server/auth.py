@@ -13,6 +13,7 @@ import logging
 
 from schemas import *
 from utils import *
+from config import get_config
 
 config = get_config()
 log = create_logger(__name__)
@@ -30,7 +31,9 @@ def authenticate_user(db: Session, username: str, password: str) -> models.User:
         return user
 
 
-def authenticate_google_user(db: Session, user_id: str, idinfo: GoogleInfo) -> models.User:
+def authenticate_google_user(
+    db: Session, user_id: str, idinfo: GoogleInfo
+) -> models.User:
     gen_pwd = get_hash_from_str(user_id)
     user = crud.get_user_by_email(db, username)
 
@@ -40,7 +43,7 @@ def authenticate_google_user(db: Session, user_id: str, idinfo: GoogleInfo) -> m
             email=idinfo.email,
             name=idinfo.name,
             profile_pic_url=idinfo.picture,
-            password=gen_pwd
+            password=gen_pwd,
         )
         user = crud.create_user(db, userObj)
     return user
@@ -72,7 +75,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise credentials_exception
     user = crud.get_user_by_email(get_db(), token_data.username)
-    log.debug("user", user.email, user.name, user.password)
+    # log.debug("user", user.email, user.name)
 
     if user is None:
         raise credentials_exception

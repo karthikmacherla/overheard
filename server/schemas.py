@@ -14,6 +14,10 @@ class GroupCreate(GroupBase):
     pass
 
 
+class GroupUpdate(GroupBase):
+    id: int
+
+
 class Group(GroupBase):
     owner_id: int
     owner: User

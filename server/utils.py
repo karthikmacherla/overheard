@@ -1,15 +1,16 @@
 from passlib.context import CryptContext
-import os
-from configparser import ConfigParser
 import logging
 import sys
-from database import SessionLocal, engine
+import models
+from database import engine, SessionLocal
+from config import get_config
 
-logging.basicConfig(filename='server-simplified.log',
-                    encoding='utf-8', level=logging.DEBUG)
+config = get_config()
+logging.basicConfig(
+    filename="server-simplified.log", encoding="utf-8", level=logging.DEBUG
+)
 
-formatter = logging.Formatter(
-    '%(levelname)s: %(name)s: line %(lineno)s, %(message)s')
+formatter = logging.Formatter("%(levelname)s: %(name)s: line %(lineno)s, %(message)s")
 
 file_handler = logging.FileHandler("server.log")
 file_handler.setFormatter(formatter)
@@ -27,23 +28,7 @@ def create_logger(name: str) -> logging.Logger:
     return logger
 
 
-def get_config():
-    """Sets up configuration for the app"""
-    env = os.getenv("ENV", ".config")
-
-    if env == ".config":
-        config = ConfigParser()
-        config.read(".config")
-        config = config["AUTH"]
-    else:
-        config = {
-            "GOOGLE_CLIENT_ID": os.getenv("GOOGLE_CLIENT_ID", "<your-google-client-id>"),
-            "JWT_SECRET": os.getenv("JWT_SECRET", "<your-jwt-secret>"),
-            "ALGORITHMS": os.getenv("ALGORITHMS", "HS256"),
-            "ACCESS_TOKEN_EXPIRE_MINUTES": os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30)
-        }
-    return config
-
+log = create_logger(__name__)
 
 """ 
 password hashing + verification
@@ -70,3 +55,11 @@ def get_db():
         return db
     finally:
         db.close()
+
+
+"""Set up
+"""
+
+
+def set_up_database():
+    models.Base.metadata.create_all(bind=engine)

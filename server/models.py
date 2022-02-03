@@ -3,10 +3,12 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 # Define all SQL related models here
-association_table = Table('association', Base.metadata,
-                          Column('user_id', ForeignKey('users.id')),
-                          Column('group_id', ForeignKey('groups.id'))
-                          )
+association_table = Table(
+    "association",
+    Base.metadata,
+    Column("user_id", ForeignKey("users.id")),
+    Column("group_id", ForeignKey("groups.id")),
+)
 
 
 class Group(Base):
@@ -16,8 +18,7 @@ class Group(Base):
     description = Column(String, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User")
-    users = relationship(
-        "User", secondary=association_table, back_populates="groups")
+    users = relationship("User", secondary=association_table, back_populates="groups")
 
 
 # single email. sign up with manual sets a password, otherwise there's a unique one generated
@@ -28,8 +29,7 @@ class User(Base):
     password = Column(String)
     profile_pic_url = Column(String, nullable=True)
     name = Column(String, index=True, nullable=True)
-    groups = relationship(
-        "Group", secondary=association_table, back_populates="users")
+    groups = relationship("Group", secondary=association_table, back_populates="users")
 
 
 class Quotes(Base):

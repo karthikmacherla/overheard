@@ -11,17 +11,15 @@ from google.auth.transport import requests
 
 from sqlalchemy.orm import Session
 
+from config import *
 from auth import *
 from utils import *
 import crud
 import models
 import schemas
-import logging
 
 
-models.Base.metadata.create_all(bind=engine)
-
-
+set_up_database()
 log = create_logger(__name__)
 app = FastAPI()
 config = get_config()
@@ -34,14 +32,16 @@ def google_login_for_access_token(token: str):
         # Specify the CLIENT_ID of the app that accesses the backend:
 
         idinfo = id_token.verify_oauth2_token(
-            token, requests.Request(),
-            config["GOOGLE_CLIENT_ID"])
+            token, requests.Request(), config["GOOGLE_CLIENT_ID"]
+        )
 
-        userid = idinfo['sub']
-        idinfo = schemas.GoogleInfo(name=idinfo["name"],
-                                    picture=idinfo["picture"],
-                                    given_name=idinfo["given_name"],
-                                    email=idinfo["email"])
+        userid = idinfo["sub"]
+        idinfo = schemas.GoogleInfo(
+            name=idinfo["name"],
+            picture=idinfo["picture"],
+            given_name=idinfo["given_name"],
+            email=idinfo["email"],
+        )
 
         log.info(idinfo)
 
@@ -58,8 +58,10 @@ def google_login_for_access_token(token: str):
         access_token = create_access_token(
             data={"sub": user.email}, expires_delta=access_token_expires
         )
-        return JSONResponse({"access_token": access_token, "token_type": "bearer"},
-                            headers={'Authorization': f'Bearer {access_token}'})
+        return JSONResponse(
+            {"access_token": access_token, "token_type": "bearer"},
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
     except ValueError:
         # Invalid token
         raise HTTPException(
@@ -71,8 +73,7 @@ def google_login_for_access_token(token: str):
 
 @app.post("/auth/username", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(
-        get_db(), form_data.username, form_data.password)
+    user = authenticate_user(get_db(), form_data.username, form_data.password)
 
     if not user:
         raise HTTPException(
@@ -107,7 +108,22 @@ def signup_for_access_token(form_data: UserCreate):
 
 
 @app.get("/users", response_model=schemas.User)
-def read_user(db: Session = Depends(get_db),
-              user=Depends(get_current_user)):
+def read_user(db: Session = Depends(get_db), user=Depends(get_current_user)):
     return user
+
+
 # return user
+
+
+@app.post("/create_group", response_model=schemas.Group)
+def create_group(
+    group_info: schemas.GroupCreate,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    return crud.create_group(db, group_info, user)
+
+
+@app.get("/list_groups", response_model=List[schemas.Group])
+def list_group(db: Session = Depends(get_db)):
+    return crud.list_groups(db)

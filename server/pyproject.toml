@@ -1,31 +1,27 @@
-[project]
-name = ""
-version = ""
+[tool.poetry]
+name = "server"
+version = "0.1.0"
 description = ""
-authors = [
-    {name = "Karthik Macherla", email = "kmacher@seas.upenn.edu"},
-]
-dependencies = [
-    "uvicorn>=0.16.0",
-    "requests>=2.26.0",
-    "fastapi[all]>=0.58.1",
-    "sqlalchemy>=1.4.29",
-    "configparser>=5.2.0",
-    "python-jose[cryptography]>=3.3.0",
-    "passlib>=1.7.4",
-    "google-auth>=2.3.3",
-    "bcrypt>=3.2.0",
-    "pylint>=2.12.2",
-    "colorlog>=6.6.0"]
-requires-python = ">=3.9"
-license = {text = "MIT"}
+authors = ["Karthik Macherla <kmacher@seas.upenn.edu>"]
 
-[project.urls]
-homepage = ""
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.73.0"
+requests = "^2.27.1"
+SQLAlchemy = "^1.4.31"
+configparser = "^5.2.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = "^1.7.4"
+google-auth = "^2.6.0"
+bcrypt = "^3.2.0"
+pylint = "^2.12.2"
+unittest2 = "^1.1.0"
+uvicorn = "^0.17.1"
+colorlog = "^6.6.0"
+python-multipart = "^0.0.5"
 
-[tool]
-[tool.pdm]
+[tool.poetry.dev-dependencies]
 
 [build-system]
-requires = ["pdm-pep517"]
-build-backend = "pdm.pep517.api"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
