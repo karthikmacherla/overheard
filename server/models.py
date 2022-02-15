@@ -55,4 +55,5 @@ class Comments(Base):
 
     time = Column(DateTime, index=True)
     creator_id = Column(Integer, ForeignKey("users.id"), index=True)
+    creator = relationship("User")
     quote_id = Column(Integer, ForeignKey("quotes.id"), index=True)

@@ -107,8 +107,9 @@ def signup_for_access_token(form_data: UserCreate):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/users", response_model=schemas.User)
+@app.get("/user", response_model=schemas.User)
 def read_user(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    log.debug(f"type of user: {type(user)}")
     return user
 
 
@@ -119,7 +120,7 @@ def read_user(db: Session = Depends(get_db), user=Depends(get_current_user)):
 def create_group(
     group_info: schemas.GroupCreate,
     db: Session = Depends(get_db),
-    user=Depends(get_current_user),
+    user: models.User = Depends(get_current_user),
 ):
     return crud.create_group(db, group_info, user)
 

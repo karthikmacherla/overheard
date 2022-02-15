@@ -15,12 +15,13 @@ passlib = "^1.7.4"
 google-auth = "^2.6.0"
 bcrypt = "^3.2.0"
 pylint = "^2.12.2"
-unittest2 = "^1.1.0"
 uvicorn = "^0.17.1"
 colorlog = "^6.6.0"
 python-multipart = "^0.0.5"
+unittest = "^0.0"
 
 [tool.poetry.dev-dependencies]
+black = {version = "^22.1.0", allow-prereleases = true}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

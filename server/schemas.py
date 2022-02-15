@@ -60,6 +60,21 @@ class Quote(QuoteCreate):
     creator: User
 
 
+class CommentBase(BaseModel):
+    message: str
+
+
+class CommentCreate(CommentBase):
+    pass
+
+
+class Comment(CommentCreate):
+    creator: User
+    likes: int
+    time: datetime
+    quote: Quote
+
+
 Group.update_forward_refs()
 
 # ------------- Auth related classes
