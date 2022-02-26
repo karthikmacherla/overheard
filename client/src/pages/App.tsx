@@ -43,6 +43,7 @@ class App extends React.Component<any, AppState> {
           p={4}
           my={5}
           mx={5}
+          bg={'blue.100'}
         >
           <GridItem rounded={'lg'} boxShadow="2xl" bg={'white'}>
             <GroupTab />

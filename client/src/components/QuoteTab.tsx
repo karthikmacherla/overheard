@@ -112,43 +112,47 @@ class QuoteTab extends React.Component<QProps, QState> {
     if (this.state.showingQuote) {
       // Show quote block 
       return (
-        <Grid
-          templateRows='repeat(11, 1fr)'
-          templateColumns='repeat(15, 1fr)'
-          m={5}
-          role={'group'}
-        >
-          <GridItem><Image src={"quotemark.png"} /></GridItem>
-          <GridItem
-            colStart={15} rowStart={11}>
-            <Image src={"quotemark.png"} transform={"rotate(180deg)"} />
-          </GridItem>
-          <GridItem colStart={3} colEnd={14} rowStart={3} rowEnd={10} >
-            <Flex h="100%" flex={{ base: 1 }} justify={'center'} alignItems={'center'}>
-              <Heading fontSize={"5vh"}>
-                {this.state.quotes[this.state.idx].message}
-              </Heading>
-            </Flex>
-          </GridItem>
-          {/* Share buttons */}
-          <GridItem colStart={15}><CommentButton handle={this.handleClose} /></GridItem>
-          <GridItem colStart={15} ><ShareButton /></GridItem>
-          <GridItem colStart={15} ><LikeButton /></GridItem>
+        <Flex flexDir={'column'} alignItems={'center'} h={"100%"} justifyContent={"center"}>
+          <Grid
+            templateRows='repeat(11, 1fr)'
+            templateColumns='repeat(15, 1fr)'
+            m={5}
+            role={'group'}
+            h={"95%"}
+            w={"95%"}
+            bg={'pink.200'}
+          >
+            <GridItem><Image src={"quotemark.png"} h={"50px"} w={"50px"} /></GridItem>
+            <GridItem
+              colStart={15} rowStart={11}>
+              <Image src={"quotemark.png"} h={"50px"} w={"50px"} transform={"rotate(180deg)"} />
+            </GridItem>
+            <GridItem colStart={3} colEnd={14} rowStart={3} rowEnd={10} >
+              <Flex h="100%" flex={{ base: 1 }} justify={'center'} alignItems={'center'}>
+                <Heading fontSize={"5vh"}>
+                  {this.state.quotes[this.state.idx].message}
+                </Heading>
+              </Flex>
+            </GridItem>
+            {/* Share buttons */}
+            <GridItem colStart={15}><CommentButton handle={this.handleClose} /></GridItem>
+            <GridItem colStart={15} ><ShareButton /></GridItem>
+            <GridItem colStart={15} ><LikeButton /></GridItem>
 
-          {/* Left Right Buttons */}
-          {this.state.idx <= 0 ? <></> :
-            (<GridItem rowStart={6}>
-              <LeftButton handle={this.prevSlide} />
-            </GridItem>)
-          }
+            {/* Left Right Buttons */}
+            {this.state.idx <= 0 ? <></> :
+              (<GridItem rowStart={6}>
+                <LeftButton handle={this.prevSlide} />
+              </GridItem>)
+            }
 
-          {this.state.idx >= (this.state.quotes.length - 1) ? <></> :
-            (<GridItem rowStart={6} colStart={15}>
-              <RightButton handle={this.nextSlide} />
-            </GridItem>)
-          }
-
-        </Grid >
+            {this.state.idx >= (this.state.quotes.length - 1) ? <></> :
+              (<GridItem rowStart={6} colStart={15}>
+                <RightButton handle={this.nextSlide} />
+              </GridItem>)
+            }
+          </Grid >
+        </Flex>
       )
     } else {
       // Show comment block
