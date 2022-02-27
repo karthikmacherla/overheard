@@ -18,9 +18,15 @@ class GroupUpdate(GroupBase):
     id: int
 
 
-class Group(GroupBase):
+class Group(GroupUpdate):
     owner_id: int
     owner: User
+
+    class Config:
+        orm_mode = True
+
+
+class GroupDetailed(Group):
     users: List[User] = []
 
     class Config:
@@ -39,7 +45,6 @@ class UserCreate(UserBase):
 
 class User(UserCreate):
     id: int
-    groups: List[Group] = []
 
     class Config:
         orm_mode = True
@@ -50,14 +55,26 @@ class QuoteBase(BaseModel):
 
 
 class QuoteCreate(QuoteBase):
+    group_id: int
     pass
 
 
-class Quote(QuoteCreate):
+class Quote(QuoteBase):
     time: datetime
     likes: int
-    group: Group
+    group_id: int
+    creator_id: int
     creator: User
+
+    class Config:
+        orm_mode = True
+
+
+class QuoteDetailed(Quote):
+    group: Group
+
+    class Config:
+        orm_mode = True
 
 
 class CommentBase(BaseModel):
@@ -76,7 +93,7 @@ class Comment(CommentCreate):
 
 
 Group.update_forward_refs()
-
+GroupDetailed.update_forward_refs()
 # ------------- Auth related classes
 
 

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import HTTPBearer
 
 from google.oauth2 import id_token
@@ -23,6 +23,11 @@ set_up_database()
 log = create_logger(__name__)
 app = FastAPI()
 config = get_config()
+
+
+@app.get("/")
+def root():
+    return RedirectResponse("/docs")
 
 
 @app.post("/auth/google")
@@ -110,21 +115,58 @@ def signup_for_access_token(form_data: UserCreate):
 @app.get("/user", response_model=schemas.User)
 def read_user(db: Session = Depends(get_db), user=Depends(get_current_user)):
     log.debug(f"type of user: {type(user)}")
+
     return user
 
 
 # return user
 
 
-@app.post("/create_group", response_model=schemas.Group)
+@app.post("/group/create", response_model=schemas.Group)
 def create_group(
     group_info: schemas.GroupCreate,
     db: Session = Depends(get_db),
     user: models.User = Depends(get_current_user),
 ):
-    return crud.create_group(db, group_info, user)
+    db = db.object_session(user)
+    db_group = crud.create_group(db, group_info, user)
+    return db_group
 
 
-@app.get("/list_groups", response_model=List[schemas.Group])
+@app.get("/group/list_all", response_model=List[schemas.GroupDetailed])
 def list_group(db: Session = Depends(get_db)):
     return crud.list_groups(db)
+
+
+@app.get("/group/list_by_user", response_model=List[schemas.GroupDetailed])
+def list_groups_for_user(user=Depends(get_current_user)):
+    return crud.list_groups_for_user(user)
+
+
+@app.post("/quote/create", response_model=schemas.Quote)
+def create_quote(
+    quote_info: schemas.QuoteCreate,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(get_current_user),
+):
+    if not crud.user_in_group(user, quote_info.group_id):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="user not in group",
+        )
+    db_quote = crud.create_quote(db, quote_info, user.id)
+    return db_quote
+
+
+@app.get("/quote/list_by_group", response_model=List[schemas.Quote])
+def list_quotes_for_group(
+    group_id: int,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    if not crud.user_in_group(user, group_id):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="user not in group",
+        )
+    return crud.list_quotes_in_group(db, group_id, user)

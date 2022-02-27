@@ -110,7 +110,7 @@ class TestGroup(unittest.TestCase):
 
     def test_delete_group(self):
         group_info = schemas.GroupCreate(
-            group_name="Penn DMAK", description="Male Fusion"
+            group_name="CIS120", description="Teaching Group"
         )
         db_group = crud.create_group(self.db, group_info, self.user)
         crud.delete_group(self.db, db_group.id)

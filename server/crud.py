@@ -57,6 +57,10 @@ def list_groups(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Group).offset(skip).limit(limit).all()
 
 
+def list_groups_for_user(user: models.User, skip: int = 0, limit: int = 10):
+    return user.groups
+
+
 def get_group(db: Session, group_id: int):
     group = db.query(models.Group).filter(models.Group.id == group_id).first()
     if not group:
@@ -77,11 +81,11 @@ def add_to_group(db: Session, group_id: int, user_to_add: int):
 
 
 # CRUD comments of quote
-def create_quote(db: Session, quote: schemas.QuoteCreate, group_id: int, user_id: int):
+def create_quote(db: Session, quote: schemas.QuoteCreate, user_id: int):
     try:
         db_quote = models.Quotes(
             message=quote.message,
-            group_id=group_id,
+            group_id=quote.group_id,
             creator_id=user_id,
             time=datetime.now(),
             likes=0,
@@ -205,7 +209,29 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User:
         return None
 
 
-# def create_group(db: Session, )
+def user_in_group(user: models.User, group_id: int) -> bool:
+    groups = {g.id for g in user.groups}
+    return group_id in groups
 
 
 # Special Routes
+
+
+# get groups from user x
+# def get_groups_from_user(db, )
+# get comments of quote
+
+
+# get quotes in group (w/ pagination)
+def list_quotes_in_group(
+    db: Session, group_id: int, user: models.User, limit: int = 100
+):
+    return (
+        db.query(models.Quotes)
+        .filter(models.Quotes.group_id == group_id)
+        .limit(limit)
+        .all()
+    )
+
+
+# get quotes in local group (w/ pagination)

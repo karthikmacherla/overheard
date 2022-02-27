@@ -6,7 +6,8 @@ import QuoteTab from '../components/QuoteTab';
 import { Grid, GridItem, Flex } from '@chakra-ui/react'
 
 interface AppState {
-  group_id?: string,
+  group_idx?: number,
+  groups: Array<string>,
   user?: User
 }
 
@@ -25,8 +26,13 @@ class App extends React.Component<any, AppState> {
       user: {
         user_id: "username",
         name: "Karthik Macherla"
-      }
+      },
+      groups: []
     }
+  }
+
+  componentDidMount() {
+
   }
 
   render() {
@@ -38,21 +44,34 @@ class App extends React.Component<any, AppState> {
             <AddBar /> : <></>
           } />
         <Grid
-          templateColumns='repeat(3, 1fr)'
+          templateColumns='repeat(7, 1fr)'
           gap={10}
           p={4}
           my={5}
           mx={5}
           bg={'blue.100'}
         >
-          <GridItem rounded={'lg'} boxShadow="2xl" bg={'white'}>
-            <GroupTab />
-          </GridItem>
-          <GridItem
-            colSpan={2} rounded={'lg'} boxShadow="2xl" bg={'white'}
-            minW={'2xl'} minH={'lg'} maxH={'xl'}>
-            <QuoteTab />
-          </GridItem>
+          {this.state.user ?
+            <>
+              <GridItem rounded={'lg'} boxShadow="2xl" bg={'white'} colSpan={2}>
+                <GroupTab />
+              </GridItem>
+              <GridItem
+                colSpan={5} rounded={'lg'} boxShadow="2xl" bg={'white'}
+                minW={'2xl'} minH={'lg'} maxH={'xl'}>
+                <QuoteTab />
+              </GridItem>
+            </>
+            :
+            <>
+              <GridItem
+                colStart={2} colSpan={5} rounded={'lg'} boxShadow="2xl" bg={'white'}
+                minW={'2xl'} minH={'lg'} maxH={'xl'}>
+                <QuoteTab />
+              </GridItem>
+            </>
+          }
+
         </Grid>
       </Flex>
     );
