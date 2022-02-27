@@ -15,6 +15,7 @@ import {
   FiHeart
 } from 'react-icons/fi';
 
+import { Quote, Comment } from '../models'
 
 interface QProps {
   group_id?: string
@@ -29,15 +30,7 @@ interface QState {
   comments_idx: Array<Comment>
 }
 
-interface Quote {
-  message: string,
-  share_link?: URL | string,
-}
 
-interface Comment {
-  message: string,
-  time?: Date
-}
 
 // list of quotes
 // current index

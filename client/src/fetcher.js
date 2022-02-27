@@ -1,5 +1,4 @@
 import config from './config.json'
-import fetch from 'node-fetch'
 
 const endpoint = `http://${config.server_host}:${config.server_port}`
 // const endpoint = `http://localhost:8000`
@@ -82,19 +81,12 @@ const get_group_quotes = async (group_id, access_token) => {
   });
 }
 
-
-
-
-
-function run() {
-  let access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdHJpbmciLCJleHAiOjE2NDU5MjUxMTZ9.zPFscTkd6OMHkc0GHoMZ2fVUubMcpB4qPSlMGBt5fCo'
-
-  get_group_quotes(2, access_token)
-    .then(res => res.json())
-    .then(res => console.log(res))
-    .catch(e => console.log(e));
+export {
+  signup,
+  getuser,
+  create_group,
+  create_quote,
+  get_group_quotes,
+  get_user_groups
 }
 
-
-
-run()

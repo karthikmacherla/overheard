@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   ChevronRightIcon
 } from '@chakra-ui/icons';
@@ -6,30 +7,37 @@ import {
   Heading, Icon, Link, Spacer, Stack, Text, useColorModeValue
 } from '@chakra-ui/react';
 import AddGroupModal from './AddGroupModal';
+import { Group } from '../models';
 
 
-
-function GroupTab() {
-  return (
-    <Flex p={3} h="100%" flex={{ base: 1 }} flexDirection={'column'}>
-      <Flex alignItems={'center'} >
-        <Heading mb={1}>Group</Heading>
-        <Spacer />
-        <AddGroupModal />
-      </Flex>
-      <Stack >
-        {GROUP_ITEMS.map((item) => (
-          <GroupItemRow key={item.label} {...item} />
-        ))}
-      </Stack>
-    </Flex>
-  )
+interface GProps {
+  groups: Array<Group>,
+  idx: number
 }
 
-const GroupItemRow = ({ label, href, subLabel }: GroupItem) => {
+class GroupTab extends React.Component<GProps, any> {
+  render() {
+    return (
+      <Flex p={3} h="100%" flex={{ base: 1 }} flexDirection={'column'} >
+        <Flex alignItems={'center'} >
+          <Heading mb={1}>Group</Heading>
+          <Spacer />
+          <AddGroupModal />
+        </Flex>
+        <Stack >
+          {this.props.groups.map((item, i) => {
+            let gi = { group: item, loc: i };
+            return < GroupItemRow key={item.id} {...gi} />
+          })}
+        </Stack>
+      </Flex >
+    )
+  }
+}
+
+const GroupItemRow = (item: GroupItem) => {
   return (
     <Link
-      href={href}
       role={'group'}
       display={'block'}
       p={2}
@@ -41,9 +49,9 @@ const GroupItemRow = ({ label, href, subLabel }: GroupItem) => {
             transition={'all .3s ease'}
             _groupHover={{ color: 'pink.400' }}
             fontWeight={500}>
-            {label}
+            {item.group.group_name}
           </Text>
-          <Text fontSize={'sm'}>{subLabel}</Text>
+          <Text fontSize={'sm'}>{item.group.description}</Text>
         </Box>
         <Flex
           transition={'all .3s ease'}
@@ -61,30 +69,9 @@ const GroupItemRow = ({ label, href, subLabel }: GroupItem) => {
 };
 
 interface GroupItem {
-  label: string;
-  subLabel?: string;
-  children?: Array<GroupItem>;
-  href?: string;
+  group: Group,
+  loc: number
 }
-
-const GROUP_ITEMS: Array<GroupItem> = [
-  {
-    label: 'Local',
-    subLabel: "the local quote block for anonymous opinions right around you",
-    href: '#',
-  },
-  {
-    label: 'Penn Masti',
-    subLabel: "A fusion dance team bleep bloop",
-    href: '#',
-  },
-  {
-    label: 'Penn Masti',
-    subLabel: "A fusion dance team bleep bloop",
-    href: '#',
-  }
-];
-
 
 
 export default GroupTab;

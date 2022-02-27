@@ -7,10 +7,11 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { FaGoogle } from 'react-icons/fa';
+import { User } from '../../models';
 import { ButtonWText } from '../Shared/Buttons';
 
 
-function SignupButton() {
+function SignupButton(props: { handleSignIn: (u: User, s: string) => void }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -19,7 +20,7 @@ function SignupButton() {
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Sign in</ModalHeader>
+          <ModalHeader>Sign up!</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
@@ -27,8 +28,8 @@ function SignupButton() {
               <Input id='login-email' type='email' />
               <FormLabel htmlFor='login-password'>Password</FormLabel>
               <Input id='login-password' type='password' />
-              <FormLabel htmlFor='login-password-conf'>Confirm Password</FormLabel>
-              <Input id='login-password-conf' type='password' />
+              {/* <FormLabel htmlFor='login-password-conf'>Confirm Password</FormLabel>
+              <Input id='login-password-conf' type='password' /> */}
               <Button colorScheme={'blue'} my={5} leftIcon={<FaGoogle />}>Sign up with Google</Button>
               <br />
               <ButtonWText type='submit' mr={3}>

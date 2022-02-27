@@ -6,10 +6,11 @@ import {
   ModalHeader, ModalOverlay, useColorModeValue, useDisclosure
 } from '@chakra-ui/react';
 import { FaGoogle } from 'react-icons/fa';
+import { User } from '../../models';
 import { ButtonWText } from '../Shared/Buttons';
 
 
-function LoginButton() {
+function LoginButton(props: { handleSignIn: (u: User, s: string) => void }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (

@@ -4,16 +4,14 @@ import GroupTab from '../components/GroupTab';
 import QuoteTab from '../components/QuoteTab';
 
 import { Grid, GridItem, Flex } from '@chakra-ui/react'
+import { get_user_groups } from '../fetcher';
+import type { User, Group, Quote } from '../models';
 
 interface AppState {
-  group_idx?: number,
-  groups: Array<string>,
-  user?: User
-}
-
-interface User {
-  user_id: String,
-  name: String
+  group_idx: number,
+  groups: Array<Group>,
+  user?: User,
+  access_token?: String
 }
 
 
@@ -23,23 +21,27 @@ class App extends React.Component<any, AppState> {
     super(props)
 
     this.state = {
-      user: {
-        user_id: "username",
-        name: "Karthik Macherla"
-      },
-      groups: []
+      groups: [],
+      group_idx: 0,
     }
   }
 
-  componentDidMount() {
-
+  async componentDidMount() {
+    if (this.state.user && this.state.access_token) {
+      let res = await get_user_groups(this.state.access_token);
+      let groups = [];
+      if (res.status === 200) {
+        groups = await res.json();
+      }
+      this.setState({ groups: groups, group_idx: 0 });
+    }
   }
 
   render() {
     return (
       <Flex flexDirection={'column'} minH={"100vh"} bg={'gray.300'}>
         <NavBar right={this.state.user ?
-          <LoggedInNav /> : <SplashNav />}
+          <LoggedInNav /> : <SplashNav handleSignIn={this.handleSignIn} />}
           addBar={this.state.user ?
             <AddBar /> : <></>
           } />
@@ -54,7 +56,7 @@ class App extends React.Component<any, AppState> {
           {this.state.user ?
             <>
               <GridItem rounded={'lg'} boxShadow="2xl" bg={'white'} colSpan={2}>
-                <GroupTab />
+                <GroupTab groups={this.state.groups} idx={this.state.group_idx} />
               </GridItem>
               <GridItem
                 colSpan={5} rounded={'lg'} boxShadow="2xl" bg={'white'}
@@ -75,6 +77,11 @@ class App extends React.Component<any, AppState> {
         </Grid>
       </Flex>
     );
+  }
+
+
+  handleSignIn(user: User, access_token: string) {
+    this.setState({ user, access_token });
   }
 }
 
