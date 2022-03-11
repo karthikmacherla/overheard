@@ -1,7 +1,7 @@
 import config from './config.json'
 
-const endpoint = `http://${config.server_host}:${config.server_port}`
-// const endpoint = `http://localhost:8000`
+// const endpoint = `http://${config.server_host}:${config.server_port}`
+const endpoint = `http://localhost:8000`
 
 
 const signup = async (email, name, password) => {
@@ -28,6 +28,28 @@ const getuser = async (access_token) => {
       'Authorization': `Bearer ${access_token}`
     }
   });
+}
+
+const username_sign_in = async (email, password) => {
+  let body = { 'email': email, 'password': password };
+
+  let token = await fetch(`${endpoint}/auth/username-json`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(res => res.json());
+
+  console.log("Token: " + JSON.stringify(token));
+
+  if (!token.access_token) {
+    return { "error": "Incorrect username/password" }
+  }
+
+  let access_token = token.access_token;
+  let user = await getuser(access_token).then(res => res.json());
+  return { access_token, user }
 }
 
 // create group
@@ -84,6 +106,7 @@ const get_group_quotes = async (group_id, access_token) => {
 export {
   signup,
   getuser,
+  username_sign_in,
   create_group,
   create_quote,
   get_group_quotes,

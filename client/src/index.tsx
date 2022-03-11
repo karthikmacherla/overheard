@@ -13,6 +13,7 @@ import {
   Route
 } from 'react-router-dom';
 import LoginTest from './pages/LoginTest';
+import Playground from './pages/Playground';
 
 
 ReactDOM.render(
@@ -29,6 +30,10 @@ ReactDOM.render(
             <Route
               path="/login"
               element={<LoginTest />}
+            />
+            <Route
+              path='/playground'
+              element={<Playground />}
             />
           </Routes>
         </Router>

@@ -4,14 +4,14 @@ import GroupTab from '../components/GroupTab';
 import QuoteTab from '../components/QuoteTab';
 
 import { Grid, GridItem, Flex } from '@chakra-ui/react'
-import { get_user_groups } from '../fetcher';
+import { getuser, get_user_groups } from '../fetcher';
 import type { User, Group, Quote } from '../models';
 
 interface AppState {
   group_idx: number,
   groups: Array<Group>,
   user?: User,
-  access_token?: String
+  access_token?: string
 }
 
 
@@ -24,24 +24,47 @@ class App extends React.Component<any, AppState> {
       groups: [],
       group_idx: 0,
     }
+
+
+    this.handleSignIn = this.handleSignIn.bind(this);
+    this.handleSignOut = this.handleSignOut.bind(this);
   }
 
   async componentDidMount() {
-    if (this.state.user && this.state.access_token) {
-      let res = await get_user_groups(this.state.access_token);
+    let access_token = this.state.access_token;
+    let user = this.state.user;
+
+    if (!access_token && localStorage.getItem("access_token") != null) {
+      access_token = localStorage.getItem("access_token")!;
+    }
+
+
+    if (access_token && !user) {
+      let res = await getuser(access_token).then(res => res.json());
+      // bad/expired token
+      if (!res.id) {
+        access_token = '';
+      } else {
+        user = res;
+      }
+    }
+
+    if (access_token && user) {
+      let res = await get_user_groups(access_token);
       let groups = [];
       if (res.status === 200) {
         groups = await res.json();
       }
       this.setState({ groups: groups, group_idx: 0 });
     }
+    this.setState({ user: user, access_token: access_token });
   }
 
   render() {
     return (
       <Flex flexDirection={'column'} minH={"100vh"} bg={'gray.300'}>
         <NavBar right={this.state.user ?
-          <LoggedInNav /> : <SplashNav handleSignIn={this.handleSignIn} />}
+          <LoggedInNav handleSignOut={this.handleSignOut} /> : <SplashNav handleSignIn={this.handleSignIn} />}
           addBar={this.state.user ?
             <AddBar /> : <></>
           } />
@@ -82,17 +105,13 @@ class App extends React.Component<any, AppState> {
 
   handleSignIn(user: User, access_token: string) {
     this.setState({ user, access_token });
+    localStorage.setItem("access_token", access_token);
+  }
+
+  handleSignOut() {
+    this.setState({ user: undefined, access_token: '', groups: [], group_idx: -1 });
+    localStorage.removeItem("access_token");
   }
 }
-
-/* 
-Data:
-- group 
-- quotes
-- current quote
-- comments for a quote
-- like/unlike
-- user-id if logged in
-*/
 
 export default App;
