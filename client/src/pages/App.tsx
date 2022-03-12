@@ -5,7 +5,7 @@ import QuoteTab from '../components/QuoteTab';
 
 import { Grid, GridItem, Flex } from '@chakra-ui/react'
 import { getuser, get_user_groups } from '../fetcher';
-import type { User, Group, Quote } from '../models';
+import type { User, Group } from '../models';
 
 interface AppState {
   group_idx: number,

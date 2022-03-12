@@ -268,16 +268,6 @@ const QUOTES: Array<Quote> = [
   }
 ]
 
-
-const QUOTES2: Array<Quote> = [
-  {
-    message: "This is a very cool way to talk to people anonymously"
-  },
-  {
-    message: "Heyo"
-  }
-]
-
 const COMMENTS: Array<Comment> = [
   {
     message: "This is a very cool way to talk to people anonymously. There is a lot of text to unpack so we can see what happens in this event."

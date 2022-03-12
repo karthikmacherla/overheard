@@ -1,10 +1,4 @@
 import React from 'react';
-import { AddBar, SplashNav, LoggedInNav, NavBar } from '../components/Nav/NavBar'
-import GroupTab from '../components/GroupTab';
-import QuoteTab from '../components/QuoteTab';
-
-import { Grid, GridItem, Flex } from '@chakra-ui/react'
-
 interface AppState {
   group_id?: string,
   user?: User
