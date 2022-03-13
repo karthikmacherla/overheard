@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './pages/App';
 import reportWebVitals from './reportWebVitals';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 
 import {
   ChakraProvider
@@ -16,28 +18,33 @@ import LoginTest from './pages/LoginTest';
 import Playground from './pages/Playground';
 
 
+// Create a client
+const queryClient = new QueryClient()
+
+
 ReactDOM.render(
   <ChakraProvider>
     <React.StrictMode>
-      <div>
-
-        <Router>
-          <Routes>
-            <Route
-              path="/"
-              element={<App />}
-            />
-            <Route
-              path="/login"
-              element={<LoginTest />}
-            />
-            <Route
-              path='/playground'
-              element={<Playground />}
-            />
-          </Routes>
-        </Router>
-      </div>
+      <QueryClientProvider client={queryClient}>
+        <div>
+          <Router>
+            <Routes>
+              <Route
+                path="/"
+                element={<App />}
+              />
+              <Route
+                path="/login"
+                element={<LoginTest />}
+              />
+              <Route
+                path='/playground'
+                element={<Playground />}
+              />
+            </Routes>
+          </Router>
+        </div>
+      </QueryClientProvider>
     </React.StrictMode>
   </ChakraProvider>,
   document.getElementById('root')

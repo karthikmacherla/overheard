@@ -10,7 +10,6 @@ import { useState } from 'react';
 function AddBar() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [quoteCode, setQuoteCode] = useState("");
-  setQuoteCode("");
 
   return (
     <>
