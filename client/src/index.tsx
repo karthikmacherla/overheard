@@ -4,7 +4,6 @@ import App from './pages/App';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-
 import {
   ChakraProvider
 } from '@chakra-ui/react'
@@ -20,7 +19,6 @@ import Playground from './pages/Playground';
 
 // Create a client
 const queryClient = new QueryClient()
-
 
 ReactDOM.render(
   <ChakraProvider>

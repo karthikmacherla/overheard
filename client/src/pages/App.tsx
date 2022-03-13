@@ -4,69 +4,50 @@ import GroupTab from '../components/GroupTab';
 import QuoteTab from '../components/QuoteTab';
 
 import { Grid, GridItem, Flex } from '@chakra-ui/react'
-import { getuser, get_user_groups } from '../fetcher';
+
+import { getuser, get_user_complete, get_user_groups } from '../fetcher';
+
 import type { User, Group } from '../models';
-import { useQueryClient } from 'react-query';
+import { isError, useQuery, useQueryClient } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
-interface AppState {
-  group_idx: number,
-  groups: Array<Group>,
-  user?: User,
-  access_token?: string
-}
 
-// app as a function
-// -- running subscription on everything going on
 function App() {
+  const queryClient = useQueryClient();
   const [accessToken, setAccessToken] = useState('')
-  const [user, setUser] = useState<User | undefined>(undefined)
-  const [groups, setGroups] = useState<Array<Group>>([])
   const [groupIdx, setGroupIdx] = useState<number>(-1)
+  const { isError: isUserError, data: user, error: userError }: any = useQuery(['user', accessToken],
+    () => get_user_complete(accessToken),
+    {
+      retry: (count, err: Error) => err.message !== 'Bad access token'
+    });
+
+  // Don't retry/enable if token is bad
+  const isBadToken = isUserError && userError.message === 'Bad access token';
+  const { isError: isGroupErr, data: groups, error: groupsError }: any = useQuery(['groups', accessToken],
+    () => get_user_groups(accessToken), { enabled: !isBadToken })
 
   useEffect(() => {
     const fetchUserData = async (access_token: string, user?: User) => {
-      if (!access_token && localStorage.getItem("access_token") != null) {
-        access_token = localStorage.getItem("access_token")!;
-      }
-
-      if (access_token && !user) {
-        let res = await getuser(access_token).then(res => res.json());
-        // bad/expired token
-        if (!res.id) {
-          access_token = '';
-        } else {
-          user = res;
-        }
-      }
-
-      if (access_token && user) {
-        let res = await get_user_groups(access_token);
-        let groups = [];
-        if (res.status === 200) {
-          groups = await res.json();
-        }
-        setGroups(groups);
-        setGroupIdx(0);
+      if (!access_token && sessionStorage.getItem("access_token") != null) {
+        access_token = sessionStorage.getItem("access_token")!;
       }
       setAccessToken(access_token);
-      setUser(user);
     };
 
-    fetchUserData(accessToken, user).catch((e) => { console.log(e); });
+    fetchUserData(accessToken).catch((e) => { console.log(e); });
   }, [accessToken, user]);
 
   const handleSignIn = (currUser: User, access_token: string) => {
+    sessionStorage.setItem("access_token", access_token);
     setAccessToken(access_token);
-    setUser(currUser);
-    localStorage.setItem("access_token", access_token);
+    setGroupIdx(0);
+    // queryClient.invalidateQueries()
   }
 
   const handleSignOut = () => {
-    setUser(undefined);
     setAccessToken('');
-    setGroups([]);
-    setGroupIdx(-1);
-    localStorage.removeItem("access_token");
+    sessionStorage.removeItem("access_token");
   }
 
   return (
@@ -84,7 +65,7 @@ function App() {
         mx={5}
         bg={'blue.100'}
       >
-        {user ?
+        {user && groups ?
           <>
             <GridItem rounded={'lg'} boxShadow="2xl" bg={'white'} colSpan={2}>
               <GroupTab groups={groups} idx={groupIdx} />
@@ -106,6 +87,7 @@ function App() {
         }
 
       </Grid>
+      <ReactQueryDevtools initialIsOpen={false} />
     </Flex>
   );
 }
