@@ -1,7 +1,8 @@
 import config from './config.json'
 
-const endpoint = `http://${config.server_host}:${config.server_port}`
-// const endpoint = `http://localhost:8000`
+// TODO: Fix this 
+// const endpoint = `http://${config.server_host}:${config.server_port}`
+const endpoint = `http://localhost:8000`
 
 
 const signup = async (email, name, password) => {
