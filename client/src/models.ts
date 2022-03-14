@@ -15,6 +15,8 @@ interface Group {
 interface Quote {
   message: string,
   share_link?: URL | string,
+  time?: Date,
+  likes?: number,
 }
 
 interface Comment {

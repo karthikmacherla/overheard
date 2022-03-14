@@ -5,11 +5,65 @@ import {
   Textarea, useDisclosure
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
+import { create_quote } from '../../fetcher';
+import { Quote, User } from '../../models';
 
+type CreateQuote = {
+  quote: string,
+  group_id: number,
+  access_token: string
+}
 
-function AddBar() {
+function AddBar(props: { group_idx: number }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const queryClient = useQueryClient();
   const [quoteCode, setQuoteCode] = useState("");
+
+  const addQuoteMutation = useMutation(
+    (newQuote: CreateQuote) => create_quote(newQuote.quote, newQuote.group_id, newQuote.access_token),
+    {
+      onMutate: async (newQuote: CreateQuote) => {
+        await queryClient.cancelQueries('groups')
+        const previousQuotes = queryClient.getQueryData<Array<Quote>>(['quotes', newQuote.access_token])
+        const currOwner = queryClient.getQueryData<User>(['user', newQuote.access_token])
+
+        if (previousQuotes) {
+          queryClient.setQueryData<Array<Quote>>(['quotes', newQuote.access_token],
+            [
+              ...previousQuotes,
+              {
+                message: newQuote.quote,
+                time: new Date(),
+                likes: 0,
+              },
+            ]
+          )
+        }
+        return { previousQuotes }
+      },
+      onError: (err, variables, context) => {
+        if (context?.previousQuotes) {
+          queryClient.setQueryData<Array<Quote>>('quotes', context.previousQuotes)
+        }
+      },
+      onSettled: (data, err, variables) => {
+        queryClient.invalidateQueries(['quotes', variables?.access_token])
+      },
+    })
+
+  const onSubmit = async (e: any) => {
+    e.preventDefault()
+    let quote = e.target.quoteblock.value;
+    let access_token = sessionStorage.getItem('access_token') || '';
+    let create_quote = {
+      quote: quote,
+      group_id: props.group_idx,
+      access_token: access_token
+    }
+    addQuoteMutation.mutate(create_quote)
+    onClose();
+  }
 
   return (
     <>
@@ -32,24 +86,26 @@ function AddBar() {
         <ModalOverlay />
         <ModalContent>
           <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel htmlFor='text'>Add a quote:</FormLabel>
-              <Textarea h={"200px"}></Textarea>
-              <br />
-              <FormHelperText>Your unique organization name.</FormHelperText>
-              <br />
-              <div hidden={quoteCode === ""}>
-                <Badge variant='subtle' colorScheme='green'>
-                  Success! Your quote is live here: {quoteCode}
-                </Badge>
+            <form onSubmit={onSubmit}>
+              <FormControl>
+                <FormLabel htmlFor='quoteblock'>Add a quote:</FormLabel>
+                <Textarea h={"200px"} name={'quoteblock'}></Textarea>
                 <br />
+                <FormHelperText>Your unique organization name.</FormHelperText>
                 <br />
-              </div>
-              <Button type='submit' colorScheme='blue' mr={3}>
-                Create!
-              </Button>
-              <Button onClick={onClose}>Cancel</Button>
-            </FormControl>
+                <div hidden={quoteCode === ""}>
+                  <Badge variant='subtle' colorScheme='green'>
+                    Success! Your quote is live here: {quoteCode}
+                  </Badge>
+                  <br />
+                  <br />
+                </div>
+                <Button type='submit' colorScheme='blue' mr={3}>
+                  Create!
+                </Button>
+                <Button onClick={onClose}>Cancel</Button>
+              </FormControl>
+            </form>
           </ModalBody>
         </ModalContent>
       </Modal>

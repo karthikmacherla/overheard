@@ -35,9 +35,6 @@ function QuoteTab(props: QProps) {
   const { isError: isQuoteErr, data: quotes, error: quoteErr } = useQuery(['quotes', accessToken, groupId],
     () => get_group_quotes(groupId, accessToken))
 
-  console.log("Quotes");
-  console.log(quotes);
-
   function prevSlide() {
     if (idx > 0) {
       setIdx(idx - 1);

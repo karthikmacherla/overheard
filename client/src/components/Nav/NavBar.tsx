@@ -11,7 +11,6 @@ import SplashNav from './SplashNav';
 
 
 interface NavProps {
-  group?: string
   addBar?: JSX.Element,
   right?: JSX.Element,
 }

@@ -58,8 +58,8 @@ function App() {
     <Flex flexDirection={'column'} minH={"100vh"} bg={'gray.300'}>
       <NavBar right={user ?
         <LoggedInNav handleSignOut={handleSignOut} /> : <SplashNav handleSignIn={handleSignIn} />}
-        addBar={user ?
-          <AddBar /> : <></>
+        addBar={user && groups && groups.length > 0 ?
+          <AddBar group_idx={groupIdx} /> : <></>
         } />
       <Grid
         templateColumns='repeat(7, 1fr)'
