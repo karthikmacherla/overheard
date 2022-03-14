@@ -59,7 +59,7 @@ function App() {
       <NavBar right={user ?
         <LoggedInNav handleSignOut={handleSignOut} /> : <SplashNav handleSignIn={handleSignIn} />}
         addBar={user && groups && groups.length > 0 ?
-          <AddBar group_idx={groupIdx} /> : <></>
+          <AddBar groups={groups} group_idx={groupIdx} /> : <></>
         } />
       <Grid
         templateColumns='repeat(7, 1fr)'

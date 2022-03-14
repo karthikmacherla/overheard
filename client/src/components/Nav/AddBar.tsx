@@ -7,7 +7,7 @@ import {
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { create_quote } from '../../fetcher';
-import { Quote, User } from '../../models';
+import { Group, Quote, User } from '../../models';
 
 type CreateQuote = {
   quote: string,
@@ -15,10 +15,13 @@ type CreateQuote = {
   access_token: string
 }
 
-function AddBar(props: { group_idx: number }) {
+function AddBar(props: { groups: Array<Group>, group_idx: number }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const queryClient = useQueryClient();
   const [quoteCode, setQuoteCode] = useState("");
+
+  const currGroup = props.groups.reduce(
+    (prev, curr) => curr.id === props.group_idx ? curr : prev)
 
   const addQuoteMutation = useMutation(
     (newQuote: CreateQuote) => create_quote(newQuote.quote, newQuote.group_id, newQuote.access_token),
@@ -80,7 +83,7 @@ function AddBar(props: { group_idx: number }) {
         rounded={'md'}
         boxShadow={'md'}
         variant='solid'>
-        Add a new quote
+        Add a new quote to {currGroup.group_name}
       </Button>
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
