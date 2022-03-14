@@ -12,7 +12,8 @@ import { Group } from '../models';
 
 interface GProps {
   groups: Array<Group>,
-  idx: number
+  idx: number,
+  setIdx: React.Dispatch<React.SetStateAction<number>>
 }
 
 class GroupTab extends React.Component<GProps, any> {
@@ -26,8 +27,8 @@ class GroupTab extends React.Component<GProps, any> {
         </Flex>
         <Stack >
           {this.props.groups.map((item, i) => {
-            let gi = { group: item, loc: i };
-            return < GroupItemRow key={item.id} {...gi} />
+            return < GroupItemRow key={item.id} group={item} idx={item.id}
+              onClick={() => this.props.setIdx(item.id)} />
           })}
         </Stack>
       </Flex >
@@ -35,13 +36,14 @@ class GroupTab extends React.Component<GProps, any> {
   }
 }
 
-const GroupItemRow = (item: GroupItem) => {
+const GroupItemRow = (props: { group: Group, idx: number, onClick: () => void }) => {
   return (
     <Link
       role={'group'}
       display={'block'}
       p={2}
       rounded={'md'}
+      onClick={props.onClick}
       _hover={{ bg: useColorModeValue('pink.50', 'gray.900') }}>
       <Stack direction={'row'} align={'center'}>
         <Box>
@@ -49,9 +51,9 @@ const GroupItemRow = (item: GroupItem) => {
             transition={'all .3s ease'}
             _groupHover={{ color: 'pink.400' }}
             fontWeight={500}>
-            {item.group.group_name}
+            {props.group.group_name}
           </Text>
-          <Text fontSize={'sm'}>{item.group.description}</Text>
+          <Text fontSize={'sm'}>{props.group.description}</Text>
         </Box>
         <Flex
           transition={'all .3s ease'}

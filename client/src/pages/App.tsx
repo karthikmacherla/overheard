@@ -16,16 +16,16 @@ function App() {
   const queryClient = useQueryClient();
   const [accessToken, setAccessToken] = useState('')
   const [groupIdx, setGroupIdx] = useState<number>(-1)
-  const { isError: isUserError, data: user, error: userError }: any = useQuery(['user', accessToken],
+  const { isError: isUserError, data: user, error: userError } = useQuery(['user', accessToken],
     () => get_user_complete(accessToken),
     {
       retry: (count, err: Error) => err.message !== 'Bad access token'
     });
 
   // Don't retry/enable if token is bad
-  const isBadToken = isUserError && userError.message === 'Bad access token';
-  const { isError: isGroupErr, data: groups, error: groupsError }: any = useQuery(['groups', accessToken],
-    () => get_user_groups(accessToken), { enabled: !isBadToken })
+  const validUser = user !== undefined;
+  const { isError: isGroupErr, data: groups, error: groupsError } = useQuery(['groups', accessToken],
+    () => get_user_groups(accessToken), { enabled: validUser })
 
   useEffect(() => {
     const fetchUserData = async (access_token: string, user?: User) => {
@@ -38,11 +38,15 @@ function App() {
     fetchUserData(accessToken).catch((e) => { console.log(e); });
   }, [accessToken, user]);
 
+  useEffect(() => {
+    if (groups && groups.length > 0 && groupIdx === -1) {
+      setGroupIdx(groups[0].id)
+    }
+  }, [groups])
+
   const handleSignIn = (currUser: User, access_token: string) => {
     sessionStorage.setItem("access_token", access_token);
     setAccessToken(access_token);
-    setGroupIdx(0);
-    // queryClient.invalidateQueries()
   }
 
   const handleSignOut = () => {
@@ -68,12 +72,12 @@ function App() {
         {user && groups ?
           <>
             <GridItem rounded={'lg'} boxShadow="2xl" bg={'white'} colSpan={2}>
-              <GroupTab groups={groups} idx={groupIdx} />
+              <GroupTab groups={groups} idx={groupIdx} setIdx={setGroupIdx} />
             </GridItem>
             <GridItem
               colSpan={5} rounded={'lg'} boxShadow="2xl" bg={'white'}
               minW={'2xl'} minH={'lg'} maxH={'xl'}>
-              <QuoteTab />
+              <QuoteTab group_id={groupIdx} />
             </GridItem>
           </>
           :
@@ -81,7 +85,7 @@ function App() {
             <GridItem
               colStart={2} colSpan={5} rounded={'lg'} boxShadow="2xl" bg={'white'}
               minW={'2xl'} minH={'lg'} maxH={'xl'}>
-              <QuoteTab />
+              <QuoteTab group_id={groupIdx} />
             </GridItem>
           </>
         }

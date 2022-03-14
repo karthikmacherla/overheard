@@ -10,169 +10,140 @@ import {
   Flex, Grid,
   GridItem, Heading, Icon, Image, Table, Tbody, Td, Tr
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FiHeart
 } from 'react-icons/fi';
+import { useQuery, useQueryClient } from 'react-query';
+import { get_group_quotes } from '../fetcher';
 
-import { Quote, Comment } from '../models'
+import { Quote, Comment, User } from '../models'
 
 interface QProps {
-  group_id?: string
+  group_id: number
 }
 
-interface QState {
-  group_id?: string,
-  showingQuote: boolean,
-  quotes: Array<Quote>;
-  idx: number,
-  fontSize: number,
-  comments_idx: Array<Comment>
-}
+function QuoteTab(props: QProps) {
+  const queryClient = useQueryClient();
+  const groupId = props.group_id;
+  const accessToken = sessionStorage.getItem('access_token') || '';
 
+  const [showQuote, setShowQuote] = useState(true);
+  const [idx, setIdx] = useState(0);
+  const [fontSize, setFontSize] = useState(5);
 
+  const { isError: isQuoteErr, data: quotes, error: quoteErr } = useQuery(['quotes', accessToken, groupId],
+    () => get_group_quotes(groupId, accessToken))
 
-// list of quotes
-// current index
-// current font size vs function to get the current font size
-class QuoteTab extends React.Component<QProps, QState> {
+  console.log("Quotes");
+  console.log(quotes);
 
-  constructor(props: QProps) {
-    super(props);
-
-    this.state = {
-      group_id: props.group_id,
-      showingQuote: true,
-      quotes: QUOTES, // define typescript interface here
-      idx: 0,
-      fontSize: 5,
-      comments_idx: COMMENTS
-    }
-
-    this.handleArrowKeys = this.handleArrowKeys.bind(this);
-    this.nextSlide = this.nextSlide.bind(this);
-    this.prevSlide = this.prevSlide.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-  }
-
-  prevSlide() {
-    if (this.state.idx > 0) {
-      this.setState({ idx: this.state.idx - 1 });
+  function prevSlide() {
+    if (idx > 0) {
+      setIdx(idx - 1);
     }
   }
 
-  nextSlide() {
-    if (this.state.idx < this.state.quotes.length - 1) {
-      this.setState({ idx: this.state.idx + 1 });
+  function nextSlide() {
+    if (idx < (quotes ? quotes.length - 1 : 0)) {
+      setIdx(idx + 1);
     }
   }
 
-  handleClose() {
-    this.setState({ showingQuote: !this.state.showingQuote })
+  function handleClose() {
+    setShowQuote(!showQuote)
   }
 
-  handleArrowKeys(event: KeyboardEvent) {
-    if (!this.state.showingQuote) {
-      //only works when displaying quote
+  function handleArrowKeys(event: KeyboardEvent) {
+    //only works when displaying quote
+    if (!showQuote) {
       return;
     }
     if (event.key === 'ArrowLeft') {
-      this.prevSlide();
+      prevSlide();
     } else if (event.key === 'ArrowRight') {
-      this.nextSlide();
+      nextSlide();
     }
   }
 
-  componentDidMount() {
-    document.addEventListener("keydown", this.handleArrowKeys, false);
-  }
-  componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleArrowKeys, false);
-  }
+  useEffect(() => {
+    document.addEventListener("keydown", handleArrowKeys, false);
+    return () => document.removeEventListener("keydown", handleArrowKeys, false);
+  })
 
-  componentDidUpdate(prevProps: QProps, prevState: QState) {
-    //group id has been changed?
-    if (this.state.group_id === prevState.group_id) {
-      return;
-    }
-
-    //requery and update state here
-  }
-
-  render(): React.ReactNode {
-    if (this.state.showingQuote) {
-      // Show quote block 
-      return (
-        <Flex flexDir={'column'} alignItems={'center'} h={"100%"} justifyContent={"center"}>
-          <Grid
-            templateRows='repeat(11, 1fr)'
-            templateColumns='repeat(15, 1fr)'
-            m={5}
-            role={'group'}
-            h={"95%"}
-            w={"95%"}
-            bg={'pink.200'}
-          >
-            <GridItem><Image src={"quotemark.png"} h={"50px"} w={"50px"} /></GridItem>
-            <GridItem
-              colStart={15} rowStart={11}>
-              <Image src={"quotemark.png"} h={"50px"} w={"50px"} transform={"rotate(180deg)"} />
-            </GridItem>
-            <GridItem colStart={3} colEnd={14} rowStart={3} rowEnd={10} >
-              <Flex h="100%" flex={{ base: 1 }} justify={'center'} alignItems={'center'}>
-                <Heading fontSize={"5vh"}>
-                  {this.state.quotes[this.state.idx].message}
-                </Heading>
-              </Flex>
-            </GridItem>
-            {/* Share buttons */}
-            <GridItem colStart={15}><CommentButton handle={this.handleClose} /></GridItem>
-            <GridItem colStart={15} ><ShareButton /></GridItem>
-            <GridItem colStart={15} ><LikeButton /></GridItem>
-
-            {/* Left Right Buttons */}
-            {this.state.idx <= 0 ? <></> :
-              (<GridItem rowStart={6}>
-                <LeftButton handle={this.prevSlide} />
-              </GridItem>)
-            }
-
-            {this.state.idx >= (this.state.quotes.length - 1) ? <></> :
-              (<GridItem rowStart={6} colStart={15}>
-                <RightButton handle={this.nextSlide} />
-              </GridItem>)
-            }
-          </Grid >
-        </Flex>
-      )
-    } else {
-      // Show comment block
-      return (
+  // all handling functions
+  if (showQuote) {
+    // Show quote block 
+    return (
+      <Flex flexDir={'column'} alignItems={'center'} h={"100%"} justifyContent={"center"}>
         <Grid
           templateRows='repeat(11, 1fr)'
           templateColumns='repeat(15, 1fr)'
           m={5}
           role={'group'}
+          h={"95%"}
+          w={"95%"}
+          bg={'pink.200'}
         >
-          <GridItem rowStart={1} rowEnd={12} colStart={1} colEnd={16} >
-            <Box overflow={'hidden'} overflowY={'scroll'} h={'lg'}>
-              <Table variant='simple' size={'lg'}>
-                <Tbody>
-                  {this.state.comments_idx.map((c, ind) => {
-                    return (
-                      <Tr>
-                        <Td>{c.message}</Td>
-                      </Tr>
-                    )
-                  })}
-                </Tbody>
-              </Table>
-            </Box>
+          <GridItem><Image src={"quotemark.png"} h={"50px"} w={"50px"} /></GridItem>
+          <GridItem
+            colStart={15} rowStart={11}>
+            <Image src={"quotemark.png"} h={"50px"} w={"50px"} transform={"rotate(180deg)"} />
           </GridItem>
-          <GridItem rowStart={1} colStart={15}><CloseButton handle={this.handleClose} /></GridItem>
-        </Grid>
-      )
-    }
+          <GridItem colStart={3} colEnd={14} rowStart={3} rowEnd={10} >
+            <Flex h="100%" flex={{ base: 1 }} justify={'center'} alignItems={'center'}>
+              <Heading fontSize={"5vh"}>
+                {quotes && idx < quotes.length ? quotes[idx].message : ''}
+              </Heading>
+            </Flex>
+          </GridItem>
+          {/* Share buttons */}
+          <GridItem colStart={15}><CommentButton handle={handleClose} /></GridItem>
+          <GridItem colStart={15} ><ShareButton /></GridItem>
+          <GridItem colStart={15} ><LikeButton /></GridItem>
+
+          {/* Left Right Buttons */}
+          {idx <= 0 ? <></> :
+            (<GridItem rowStart={6}>
+              <LeftButton handle={prevSlide} />
+            </GridItem>)
+          }
+
+          {idx >= (quotes ? quotes.length - 1 : 0) ? <></> :
+            (<GridItem rowStart={6} colStart={15}>
+              <RightButton handle={nextSlide} />
+            </GridItem>)
+          }
+        </Grid >
+      </Flex>
+    )
+  } else {
+    // Show comment block
+    return (
+      <Grid
+        templateRows='repeat(11, 1fr)'
+        templateColumns='repeat(15, 1fr)'
+        m={5}
+        role={'group'}
+      >
+        {/* <GridItem rowStart={1} rowEnd={12} colStart={1} colEnd={16} >
+          <Box overflow={'hidden'} overflowY={'scroll'} h={'lg'}>
+            <Table variant='simple' size={'lg'}>
+              <Tbody>
+                {this.state.comments_idx.map((c, ind) => {
+                  return (
+                    <Tr>
+                      <Td>{c.message}</Td>
+                    </Tr>
+                  )
+                })}
+              </Tbody>
+            </Table>
+          </Box>
+        </GridItem> */}
+        <GridItem rowStart={1} colStart={15}><CloseButton handle={handleClose} /></GridItem>
+      </Grid>
+    )
   }
 }
 

@@ -1,4 +1,4 @@
-import { Group, User } from './models';
+import { Group, Quote, User } from './models';
 
 // TODO: Fix this 
 // const endpoint = `http://${config.server_host}:${config.server_port}`
@@ -89,7 +89,7 @@ const create_group = async (group_name: string, description: string, access_toke
 }
 
 // get groups for user
-const get_user_groups = async (access_token: string) => {
+const get_user_groups = async (access_token: string): Promise<Array<Group>> => {
   let resp = await fetch(`${endpoint}/group/list_by_user`, {
     method: 'GET',
     headers: {
@@ -125,14 +125,34 @@ const create_quote = async (quote: string, group_id: number, access_token: strin
 
 
 // get quotes for group
-const get_group_quotes = async (group_id: number, access_token: string) => {
-  return await fetch(`${endpoint}/quote/list_by_group?group_id=${group_id}`, {
+const get_group_quotes = async (group_id: number, access_token: string): Promise<Array<Quote>> => {
+  let res = await fetch(`${endpoint}/quote/list_by_group?group_id=${group_id}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${access_token}`
     }
   });
+
+  checkAuthorization(res);
+
+  let quotes = await res.json();
+  if (quotes.detail) {
+    throw new Error("Bad params");
+  }
+
+  return quotes;
 }
+
+function checkAuthorization(res: Response) {
+  if (res.status === 401) {
+    throw new Error("Bad access token");
+  }
+  return;
+}
+
+// function checkBadParams(res: Response) {
+//   if (res.status === )
+// }
 
 export {
   signup,
