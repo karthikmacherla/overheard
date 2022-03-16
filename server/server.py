@@ -146,7 +146,6 @@ def read_user(db: Session = Depends(get_db), user=Depends(get_current_user)):
     return user
 
 
-# return user
 @app.post("/group/create", response_model=schemas.Group)
 def create_group(
     group_info: schemas.GroupCreate,
@@ -158,14 +157,29 @@ def create_group(
     return db_group
 
 
+@app.post("/group/join", response_model=schemas.Group)
+def join_group(
+    group_info: schemas.GroupInfo,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(get_current_user),
+):
+    res = crud.add_to_group_by_code(db, group_info.group_code, user)
+    if not res:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="Invalid group code",
+        )
+    return res
+
+
 @app.get("/group/list_all", response_model=List[schemas.GroupDetailed])
 def list_group(db: Session = Depends(get_db)):
     return crud.list_groups(db)
 
 
 @app.get("/group/list_by_user", response_model=List[schemas.GroupDetailed])
-def list_groups_for_user(user=Depends(get_current_user)):
-    return crud.list_groups_for_user(user)
+def list_groups_for_user(user=Depends(get_current_user), db: Session = Depends(get_db)):
+    return crud.list_groups_for_user(db, user)
 
 
 @app.post("/quote/create", response_model=schemas.Quote)

@@ -1,15 +1,17 @@
 
 import { AddIcon } from '@chakra-ui/icons';
 import {
-  Button, FormControl, FormHelperText, FormLabel,
+  Badge,
+  Button, FormControl, FormErrorMessage, FormHelperText, FormLabel,
   Input, Modal, ModalBody,
   ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, useDisclosure
 } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from 'react-query';
-import { create_group } from '../fetcher';
-import { RoundButton } from './Shared/Buttons';
-import { Group, User } from '../models'
+import { create_group } from '../../fetcher';
+import { RoundButton } from '../Shared/Buttons';
+import { Group, User } from '../../models'
+import { useState } from 'react';
 
 
 type CreateGroup = {
@@ -18,13 +20,13 @@ type CreateGroup = {
   access_token: string
 }
 
-function AddGroupModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+function AddGroupModal(props: { isOpen: boolean, onOpen: () => void, onClose: () => void }) {
+  // const { isOpen, onOpen, onClose } = useDisclosure()
   const queryClient = useQueryClient();
+  const [groupCode, setGroupCode] = useState("");
 
   const addGroupMutation = useMutation(
     (newGroup) => create_group(newGroup.group_name, newGroup.description, newGroup.access_token),
-    // (newGroup: CreateGroup) => create_group(newGroup.group_name, newGroup.description, newGroup.access_token),
     {
       // When mutate is called:
       onMutate: async (newGroup: CreateGroup) => {
@@ -41,6 +43,7 @@ function AddGroupModal() {
               {
                 id: Math.random() * 1000,
                 group_name: newGroup.group_name,
+                group_code: "DUMMY_CODE",
                 description: newGroup.description,
                 owner_id: Math.random() * 1000,
                 owner: currOwner!
@@ -58,6 +61,9 @@ function AddGroupModal() {
       },
       // Always refetch after error or success:
       onSettled: (data, err, variables) => {
+        if (data && data.id) {
+          setGroupCode(data.group_code);
+        }
         queryClient.invalidateQueries(['groups', variables?.access_token])
       },
     })
@@ -73,38 +79,40 @@ function AddGroupModal() {
       access_token: access_token
     }
     addGroupMutation.mutate(group_obj);
-    onClose();
+    // props.onClose();
   }
-  // Support group code TODO!
-  // const [groupCode, setGroupCode] = useState(""); 
+
+  const error: any = addGroupMutation.error || {};
+
   return (
     <>
-      <RoundButton handle={onOpen}><AddIcon /></RoundButton>
-      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+      <Modal closeOnOverlayClick={false} isOpen={props.isOpen} onClose={props.onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create a new group</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <form onSubmit={onSubmit}>
-              <FormControl>
+              <FormControl isInvalid={addGroupMutation.isError}>
                 <FormLabel htmlFor='group-name'>Group name</FormLabel>
                 <Input id='group-name' type='text' name='name' />
-                <FormHelperText>Your unique organization name.</FormHelperText>
                 <FormLabel htmlFor='group-name'>Group description</FormLabel>
                 <Input id='group-desc' type='text' name='description' />
                 <br />
-                {/* <div hidden={groupCode === ""}>
+                <br />
+                <FormErrorMessage>{error.message}</FormErrorMessage>
+                <div hidden={groupCode === ""}>
                   <Badge variant='subtle' colorScheme='green'>
                     Success! Your group code is: {groupCode}
                   </Badge>
                   <br />
                   <br />
-                </div> */}
-                <Button type='submit' colorScheme='blue' mr={3}>
+                </div>
+                <Button type='submit' colorScheme='blue' mr={3} isLoading={addGroupMutation.isLoading}
+                  hidden={addGroupMutation.isSuccess}>
                   Create!
                 </Button>
-                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={props.onClose}>Cancel</Button>
               </FormControl>
             </form>
           </ModalBody>

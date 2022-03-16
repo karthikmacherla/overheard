@@ -60,22 +60,29 @@ def delete_group(db: Session, group_id: int):
         return False
 
 
-def add_to_group_by_code(db: Session, group_code: str, user_to_add: int):
-    user = db.query(models.User).filter(models.User.id == user_to_add).first()
+def add_to_group_by_code(db: Session, group_code: str, user: models.User):
+    user = get_user_by_id(db, user.id)
     group = db.query(models.Group).filter(models.Group.group_code == group_code).first()
-    if not group or not user:
-        return False
+    if not group:
+        return
 
     if user not in group.users:
-        group.users.add(user)
-    return True
+        statement = models.association_table.insert().values(
+            user_id=user.id, group_id=group.id
+        )
+        db.execute(statement)
+        db.commit()
+    return group
 
 
 def list_groups(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Group).offset(skip).limit(limit).all()
 
 
-def list_groups_for_user(user: models.User, skip: int = 0, limit: int = 10):
+def list_groups_for_user(
+    db: Session, user: models.User, skip: int = 0, limit: int = 10
+):
+    user = get_user_by_id(db, user.id)
     return user.groups
 
 
@@ -94,8 +101,9 @@ def add_to_group(db: Session, group_id: int, user_to_add: int):
         return False
 
     if user not in group.users:
-        group.users.add(user)
-    return True
+        group.users.append(user)
+        db.session.commit()
+    return group
 
 
 # CRUD comments of quote

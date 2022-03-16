@@ -1,13 +1,18 @@
 import React from 'react';
 import {
-  ChevronRightIcon
+  AddIcon,
+  ChevronDownIcon,
+  ChevronRightIcon, CopyIcon, EditIcon, ExternalLinkIcon, HamburgerIcon, LinkIcon, RepeatIcon, StarIcon
 } from '@chakra-ui/icons';
 import {
-  Box, Flex,
-  Heading, Icon, Link, Spacer, Stack, Text, useColorModeValue
+  Box, Flex, Heading, Icon, IconButton, Link, Menu,
+  MenuButton, MenuItem, MenuList, Spacer, Stack, Text, toast, useColorModeValue, useDisclosure, useToast
 } from '@chakra-ui/react';
-import AddGroupModal from './AddGroupModal';
-import { Group } from '../models';
+import AddGroupModal from './Group/AddGroupModal';
+import { Group, User } from '../models';
+import JoinGroupModal from './Group/JoinGroupModal';
+import { FiMoreVertical, FiTrash, FiUsers } from 'react-icons/fi';
+import { useQueryClient } from 'react-query';
 
 
 interface GProps {
@@ -23,7 +28,7 @@ class GroupTab extends React.Component<GProps, any> {
         <Flex alignItems={'center'} >
           <Heading mb={1}>Group</Heading>
           <Spacer />
-          <AddGroupModal />
+          <GroupMenu />
         </Flex>
         <Stack >
           {this.props.groups.map((item, i) => {
@@ -34,6 +39,27 @@ class GroupTab extends React.Component<GProps, any> {
       </Flex >
     )
   }
+}
+
+const GroupMenu = () => {
+  // Create modal states
+  const { isOpen: isCreate, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
+  const { isOpen: isJoin, onOpen: onJoinOpen, onClose: onJoinClose } = useDisclosure();
+
+  return (<Menu>
+    <MenuButton
+      as={IconButton}
+      aria-label='Options'
+      icon={<HamburgerIcon />}
+      variant='outline'
+    />
+    <MenuList>
+      <MenuItem icon={<AddIcon />} command='⌘T' onClick={onCreateOpen} >New Group</MenuItem>
+      <MenuItem icon={<CopyIcon />} onClick={onJoinOpen}>Join Group</MenuItem>
+    </MenuList>
+    <AddGroupModal isOpen={isCreate} onOpen={onCreateOpen} onClose={onCreateClose} />
+    <JoinGroupModal isOpen={isJoin} onOpen={onJoinOpen} onClose={onJoinClose} />
+  </Menu>)
 }
 
 const GroupItemRow = (props: { group: Group, idx: number, onClick: () => void }) => {
@@ -63,12 +89,55 @@ const GroupItemRow = (props: { group: Group, idx: number, onClick: () => void })
           justify={'flex-end'}
           align={'center'}
           flex={1}>
-          <Icon color={'pink.400'} w={5} h={5} as={ChevronRightIcon} />
+          <GroupItemMenu group={props.group}></GroupItemMenu>
         </Flex>
       </Stack>
     </Link>
   );
 };
+
+
+const GroupItemMenu = (props: { group: Group }) => {
+  // Create modal states
+  const { isOpen: isCreate, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
+  const { isOpen: isJoin, onOpen: onJoinOpen, onClose: onJoinClose } = useDisclosure();
+  const queryClient = useQueryClient();
+
+  const access_token = sessionStorage.getItem("access_token") || '';
+  const currOwner = queryClient.getQueryData<User>(['user', access_token]);
+  const isOwner = props.group.owner_id === currOwner?.id;
+  const copyPasteToast = useToast()
+
+  const copyShareLink = () => {
+    navigator.clipboard.writeText(props.group.group_code)
+    copyPasteToast({
+      title: 'Copied to clipboard!',
+      description: `Group code: ${props.group.group_code}`,
+      status: 'success',
+      duration: 9000,
+      isClosable: true,
+    })
+  }
+
+  return (<Menu>
+    <MenuButton
+      as={IconButton}
+      aria-label='Options'
+      icon={<Icon color={'pink.400'} w={5} h={5} as={FiMoreVertical} />}
+      variant='link'
+    />
+    <MenuList>
+      <MenuItem icon={<StarIcon />} onClick={onCreateOpen} >My quotes</MenuItem>
+      <MenuItem icon={<LinkIcon />} command='⌘C' onClick={copyShareLink} >Copy Group Code</MenuItem>
+      {
+        isOwner ?
+          <><MenuItem icon={<FiUsers />} onClick={onJoinOpen}>Manage Members</MenuItem>
+            <MenuItem icon={<FiTrash />} onClick={onJoinOpen}>Delete Group</MenuItem></>
+          : <MenuItem icon={<FiTrash />} onClick={onJoinOpen}>Leave Group</MenuItem>
+      }
+    </MenuList>
+  </Menu>)
+}
 
 interface GroupItem {
   group: Group,

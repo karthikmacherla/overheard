@@ -28,7 +28,7 @@ function App() {
     () => get_user_groups(accessToken), { enabled: validUser })
 
   useEffect(() => {
-    const fetchUserData = async (access_token: string, user?: User) => {
+    const fetchUserData = async (access_token: string) => {
       if (!access_token && sessionStorage.getItem("access_token") != null) {
         access_token = sessionStorage.getItem("access_token")!;
       }
@@ -36,7 +36,7 @@ function App() {
     };
 
     fetchUserData(accessToken).catch((e) => { console.log(e); });
-  }, [accessToken, user]);
+  }, [accessToken]);
 
   useEffect(() => {
     if (groups && groups.length > 0 && groupIdx === -1) {
@@ -67,15 +67,14 @@ function App() {
         p={4}
         my={5}
         mx={5}
-        bg={'blue.100'}
       >
         {user && groups ?
           <>
-            <GridItem rounded={'lg'} boxShadow="2xl" bg={'white'} colSpan={2}>
+            <GridItem rounded={'md'} boxShadow="2xl" bg={'white'} colSpan={2}>
               <GroupTab groups={groups} idx={groupIdx} setIdx={setGroupIdx} />
             </GridItem>
             <GridItem
-              colSpan={5} rounded={'lg'} boxShadow="2xl" bg={'white'}
+              colSpan={5} rounded={'md'} boxShadow="2xl" bg={'white'}
               minW={'2xl'} minH={'lg'} maxH={'xl'}>
               <QuoteTab group_id={groupIdx} />
             </GridItem>
@@ -83,7 +82,7 @@ function App() {
           :
           <>
             <GridItem
-              colStart={2} colSpan={5} rounded={'lg'} boxShadow="2xl" bg={'white'}
+              colStart={2} colSpan={5} rounded={'md'} boxShadow="2xl" bg={'white'}
               minW={'2xl'} minH={'lg'} maxH={'xl'}>
               <QuoteTab group_id={groupIdx} />
             </GridItem>

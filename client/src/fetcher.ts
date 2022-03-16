@@ -81,10 +81,36 @@ const create_group = async (group_name: string, description: string, access_toke
   });
 
   if (!res.ok) {
-    throw Error("Group couldn't be created");
+    throw new Error("Group couldn't be created");
   }
 
   let group = await res.json();
+  return group;
+}
+
+
+const join_group = async (group_code: string, access_token: string): Promise<Group> => {
+  let body = { "group_code": group_code }
+
+  let res = await fetch(`${endpoint}/group/join`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  if (res.status === 406) {
+    throw new Error("Invalid group code.");
+  } else if (!res.ok) {
+    throw new Error("Cannot join group with code.");
+  }
+
+  let group = await res.json();
+
   return group;
 }
 
@@ -160,6 +186,7 @@ export {
   username_sign_in,
   get_user_complete,
   create_group,
+  join_group,
   create_quote,
   get_group_quotes,
   get_user_groups

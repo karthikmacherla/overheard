@@ -18,6 +18,10 @@ class GroupUpdate(GroupBase):
     id: int
 
 
+class GroupInfo(BaseModel):
+    group_code: str
+
+
 class Group(GroupUpdate):
     group_code: str
     owner_id: int

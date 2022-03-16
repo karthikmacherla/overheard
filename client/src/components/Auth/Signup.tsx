@@ -26,6 +26,7 @@ function SignupButton(props: { handleSignIn: (u: User, s: string) => void }) {
 
     if (pass !== confpass) {
       setError("Passwords do not match!");
+      return;
     }
 
     let res = await signup(user, name, pass).then(res => res.json());

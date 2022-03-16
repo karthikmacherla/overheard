@@ -1,12 +1,14 @@
 interface User {
   email: String,
   name: String,
+  id: number,
   profile_pic_url?: String,
 }
 
 interface Group {
-  group_name: String,
-  description?: String,
+  group_name: string,
+  group_code: string,
+  description?: string,
   id: number,
   owner_id: number,
   owner: User

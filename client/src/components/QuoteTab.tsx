@@ -80,7 +80,6 @@ function QuoteTab(props: QProps) {
           role={'group'}
           h={"95%"}
           w={"95%"}
-          bg={'pink.200'}
         >
           <GridItem><Image src={"quotemark.png"} h={"50px"} w={"50px"} /></GridItem>
           <GridItem
