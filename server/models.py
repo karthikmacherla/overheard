@@ -14,8 +14,9 @@ association_table = Table(
 class Group(Base):
     __tablename__ = "groups"
     id = Column(Integer, primary_key=True, index=True)
+    group_code = Column(String, index=True, unique=True)
     group_name = Column(String, index=True)
-    description = Column(String, index=True)
+    description = Column(String)
     owner_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User")
     users = relationship("User", secondary=association_table, back_populates="groups")

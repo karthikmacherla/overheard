@@ -19,6 +19,7 @@ class GroupUpdate(GroupBase):
 
 
 class Group(GroupUpdate):
+    group_code: str
     owner_id: int
     owner: User
 

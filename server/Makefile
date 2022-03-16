@@ -1,5 +1,5 @@
 clean:
-	rm *.log
+	rm -f *.log
 
 clean-db:
 	rm -f *.db

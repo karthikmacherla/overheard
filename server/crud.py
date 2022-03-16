@@ -3,6 +3,8 @@ from sqlalchemy.exc import IntegrityError
 
 import models
 import schemas
+import random
+import string
 from datetime import datetime
 from utils import get_hash_from_str, create_logger
 
@@ -16,10 +18,15 @@ def create_group(
     db: Session, group_info: schemas.GroupCreate, user: models.User
 ) -> models.Group:
     try:
+        group_code = "".join(
+            random.SystemRandom().choice(string.ascii_uppercase + string.digits)
+            for _ in range(6)
+        )
         db_group = models.Group(
             group_name=group_info.group_name,
             description=group_info.description,
             owner_id=user.id,
+            group_code=group_code,
             users=[user],
         )
         db.add(db_group)
@@ -51,6 +58,17 @@ def delete_group(db: Session, group_id: int):
         return True
     else:
         return False
+
+
+def add_to_group_by_code(db: Session, group_code: str, user_to_add: int):
+    user = db.query(models.User).filter(models.User.id == user_to_add).first()
+    group = db.query(models.Group).filter(models.Group.group_code == group_code).first()
+    if not group or not user:
+        return False
+
+    if user not in group.users:
+        group.users.add(user)
+    return True
 
 
 def list_groups(db: Session, skip: int = 0, limit: int = 100):

@@ -143,13 +143,10 @@ def signup_for_access_token(form_data: UserCreate):
 @app.get("/user", response_model=schemas.User)
 def read_user(db: Session = Depends(get_db), user=Depends(get_current_user)):
     log.debug(f"type of user: {type(user)}")
-
     return user
 
 
 # return user
-
-
 @app.post("/group/create", response_model=schemas.Group)
 def create_group(
     group_info: schemas.GroupCreate,
