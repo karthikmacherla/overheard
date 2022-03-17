@@ -13,6 +13,7 @@ import { Group, User } from '../models';
 import JoinGroupModal from './Group/JoinGroupModal';
 import { FiMoreVertical, FiTrash, FiUsers } from 'react-icons/fi';
 import { useQueryClient } from 'react-query';
+import DeleteGroupModal from './Group/DeleteGroupModal';
 
 
 interface GProps {
@@ -99,8 +100,8 @@ const GroupItemRow = (props: { group: Group, idx: number, onClick: () => void })
 
 const GroupItemMenu = (props: { group: Group }) => {
   // Create modal states
-  const { isOpen: isCreate, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
-  const { isOpen: isJoin, onOpen: onJoinOpen, onClose: onJoinClose } = useDisclosure();
+  const memberState = useDisclosure();
+  const deleteState = useDisclosure();
   const queryClient = useQueryClient();
 
   const access_token = sessionStorage.getItem("access_token") || '';
@@ -127,22 +128,18 @@ const GroupItemMenu = (props: { group: Group }) => {
       variant='link'
     />
     <MenuList>
-      <MenuItem icon={<StarIcon />} onClick={onCreateOpen} >My quotes</MenuItem>
+      <MenuItem icon={<StarIcon />} onClick={deleteState.onOpen} >My quotes</MenuItem>
       <MenuItem icon={<LinkIcon />} command='⌘C' onClick={copyShareLink} >Copy Group Code</MenuItem>
       {
         isOwner ?
-          <><MenuItem icon={<FiUsers />} onClick={onJoinOpen}>Manage Members</MenuItem>
-            <MenuItem icon={<FiTrash />} onClick={onJoinOpen}>Delete Group</MenuItem></>
-          : <MenuItem icon={<FiTrash />} onClick={onJoinOpen}>Leave Group</MenuItem>
+          <><MenuItem icon={<FiUsers />} onClick={memberState.onOpen}>Manage Members</MenuItem>
+            <MenuItem icon={<FiTrash />} onClick={deleteState.onOpen}>Delete Group</MenuItem></>
+          : <MenuItem icon={<FiTrash />} onClick={deleteState.onOpen}>Leave Group</MenuItem>
       }
     </MenuList>
-  </Menu>)
+    <DeleteGroupModal group_id={props.group.id} modalState={deleteState} isOwner={isOwner} />
+  </Menu>
+  )
 }
-
-interface GroupItem {
-  group: Group,
-  loc: number
-}
-
 
 export default GroupTab;

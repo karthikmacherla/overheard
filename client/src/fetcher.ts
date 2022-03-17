@@ -114,6 +114,31 @@ const join_group = async (group_code: string, access_token: string): Promise<Gro
   return group;
 }
 
+const delete_group = async (group_id: number, access_token: string): Promise<boolean> => {
+  let body = { "id": group_id }
+
+  let res = await fetch(`${endpoint}/group/delete`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  if (res.status === 406) {
+    throw new Error("Invalid group code.");
+  } else if (!res.ok) {
+    throw new Error("Cannot join group with code.");
+  }
+
+  let is_successful = await res.json();
+
+  return is_successful;
+}
+
 // get groups for user
 const get_user_groups = async (access_token: string): Promise<Array<Group>> => {
   let resp = await fetch(`${endpoint}/group/list_by_user`, {
@@ -183,6 +208,7 @@ function checkAuthorization(res: Response) {
 export {
   signup,
   getuser,
+  delete_group,
   username_sign_in,
   get_user_complete,
   create_group,

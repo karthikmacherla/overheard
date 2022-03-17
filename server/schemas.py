@@ -22,6 +22,10 @@ class GroupInfo(BaseModel):
     group_code: str
 
 
+class GroupDelete(BaseModel):
+    id: int
+
+
 class Group(GroupUpdate):
     group_code: str
     owner_id: int

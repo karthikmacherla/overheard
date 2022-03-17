@@ -52,7 +52,9 @@ def update_group(db: Session, group_info: schemas.GroupCreate):
 
 def delete_group(db: Session, group_id: int):
     group = db.query(models.Group).get(group_id)
+
     if group:
+        db.query(models.Quotes).filter(models.Quotes.group_id == group_id).delete()
         db.delete(group)
         db.commit()
         return True

@@ -182,6 +182,11 @@ def list_groups_for_user(user=Depends(get_current_user), db: Session = Depends(g
     return crud.list_groups_for_user(db, user)
 
 
+@app.post("/group/delete", response_model=bool)
+def delete_group_by_id(group: schemas.GroupDelete, db: Session = Depends(get_db)):
+    res = crud.delete_group(db, group.id)
+
+
 @app.post("/quote/create", response_model=schemas.Quote)
 def create_quote(
     quote_info: schemas.QuoteCreate,
