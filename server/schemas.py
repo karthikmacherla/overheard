@@ -22,7 +22,7 @@ class GroupInfo(BaseModel):
     group_code: str
 
 
-class GroupDelete(BaseModel):
+class GroupID(BaseModel):
     id: int
 
 
@@ -122,3 +122,8 @@ class GoogleInfo(BaseModel):
     family_name: str
     picture: Optional[str] = None
     sub: str
+
+
+class UserRemove(BaseModel):
+    user_id: int
+    group_id: int

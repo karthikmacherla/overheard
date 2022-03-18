@@ -14,6 +14,7 @@ import JoinGroupModal from './Group/JoinGroupModal';
 import { FiMoreVertical, FiTrash, FiUsers } from 'react-icons/fi';
 import { useQueryClient } from 'react-query';
 import DeleteGroupModal from './Group/DeleteGroupModal';
+import ManageMembersModal from './Group/ManageMembersModal';
 
 
 interface GProps {
@@ -137,6 +138,7 @@ const GroupItemMenu = (props: { group: Group }) => {
           : <MenuItem icon={<FiTrash />} onClick={deleteState.onOpen}>Leave Group</MenuItem>
       }
     </MenuList>
+    <ManageMembersModal modalState={memberState} group_id={props.group.id} />
     <DeleteGroupModal group_id={props.group.id} modalState={deleteState} isOwner={isOwner} />
   </Menu>
   )

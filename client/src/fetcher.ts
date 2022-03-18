@@ -159,6 +159,46 @@ const get_user_groups = async (access_token: string): Promise<Array<Group>> => {
   return groups;
 }
 
+const get_users_in_group = async (group_id: number, access_token: string): Promise<Array<User>> => {
+  let resp = await fetch(`${endpoint}/group/users?group_id=${group_id}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(resp);
+  if (resp.status === 422)
+    throw new Error("Invalid request params");
+  else if (!resp.ok)
+    throw new Error("request failed")
+
+  let users = await resp.json();
+  return users;
+}
+
+const remove_user_from_group = async (user_id: number, group_id: number, access_token: string): Promise<boolean> => {
+  let body = { user_id, group_id };
+
+  let res = await fetch(`${endpoint}/group/remove_user`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  if (!res.ok) {
+    throw new Error("Error removing user from group.");
+  }
+
+  let is_successful = await res.json();
+
+  return is_successful;
+}
 
 // create quote for group
 const create_quote = async (quote: string, group_id: number, access_token: string) => {
@@ -215,6 +255,8 @@ export {
   join_group,
   create_quote,
   get_group_quotes,
-  get_user_groups
+  get_user_groups,
+  get_users_in_group,
+  remove_user_from_group
 }
 

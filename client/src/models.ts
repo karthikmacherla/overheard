@@ -1,6 +1,6 @@
 interface User {
-  email: String,
-  name: String,
+  email: string,
+  name: string,
   id: number,
   profile_pic_url?: String,
 }

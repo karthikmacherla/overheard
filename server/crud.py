@@ -77,6 +77,38 @@ def add_to_group_by_code(db: Session, group_code: str, user: models.User):
     return group
 
 
+def list_users_in_group(db: Session, group_id: int, user: models.User):
+    group = db.query(models.Group).get(group_id)
+    if not group:
+        raise Exception("group does not exist")
+
+    users = group.users
+    user_ids = {u.id for u in users}
+    if user.id not in user_ids:
+        raise Exception("user not in group")
+
+    return users
+
+
+def remove_user_from_group(db: Session, user: models.User, group_id: int, user_id: int):
+    group = db.query(models.Group).get(group_id)
+
+    if not group:
+        raise Exception("group does not exist")
+
+    if user.id != group.owner_id:
+        raise Exception("user cannot remove other users")
+
+    users = group.users
+    remove_user = next((u for u in users if u.id == user_id), None)
+    if not remove_user:
+        raise Exception("user not in group list")
+
+    group.users.remove(remove_user)
+    db.commit()
+    return True
+
+
 def list_groups(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Group).offset(skip).limit(limit).all()
 

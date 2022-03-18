@@ -5,7 +5,6 @@ import {
   ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, useToast,
 } from '@chakra-ui/react';
-import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { delete_group } from '../../fetcher';
 
@@ -14,7 +13,7 @@ type DeleteGroup = {
   access_token: string,
 }
 
-function JoinGroupModal(props: {
+function DeleteGroupModal(props: {
   group_id: number,
   modalState: {
     isOpen: boolean,
@@ -86,4 +85,4 @@ function JoinGroupModal(props: {
   )
 }
 
-export default JoinGroupModal;
+export default DeleteGroupModal;

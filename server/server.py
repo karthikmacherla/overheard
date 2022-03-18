@@ -183,8 +183,35 @@ def list_groups_for_user(user=Depends(get_current_user), db: Session = Depends(g
 
 
 @app.post("/group/delete", response_model=bool)
-def delete_group_by_id(group: schemas.GroupDelete, db: Session = Depends(get_db)):
+def delete_group_by_id(group: schemas.GroupID, db: Session = Depends(get_db)):
     res = crud.delete_group(db, group.id)
+    return res
+
+
+@app.post("/group/remove_user", response_model=bool)
+def remove_user_from_group(
+    user_group: schemas.UserRemove,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(get_current_user),
+):
+    try:
+        res = crud.remove_user_from_group(
+            db, user, user_group.group_id, user_group.user_id
+        )
+        return res
+    except Exception as err:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=err.args)
+
+
+@app.get("/group/users", response_model=List[schemas.User])
+def get_users_in_group(
+    group_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)
+):
+    try:
+        res = crud.list_users_in_group(db, group_id, user)
+        return res
+    except Exception as err:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=err.args)
 
 
 @app.post("/quote/create", response_model=schemas.Quote)
