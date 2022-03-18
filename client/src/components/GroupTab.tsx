@@ -1,19 +1,17 @@
-import React from 'react';
 import {
-  AddIcon,
-  ChevronDownIcon,
-  ChevronRightIcon, CopyIcon, EditIcon, ExternalLinkIcon, HamburgerIcon, LinkIcon, RepeatIcon, StarIcon
+  AddIcon, CopyIcon, HamburgerIcon, LinkIcon, StarIcon
 } from '@chakra-ui/icons';
 import {
   Box, Flex, Heading, Icon, IconButton, Link, Menu,
-  MenuButton, MenuItem, MenuList, Spacer, Stack, Text, toast, useColorModeValue, useDisclosure, useToast
+  MenuButton, MenuItem, MenuList, Spacer, Stack, Text, useColorModeValue, useDisclosure, useToast
 } from '@chakra-ui/react';
-import AddGroupModal from './Group/AddGroupModal';
-import { Group, User } from '../models';
-import JoinGroupModal from './Group/JoinGroupModal';
+import React from 'react';
 import { FiMoreVertical, FiTrash, FiUsers } from 'react-icons/fi';
 import { useQueryClient } from 'react-query';
+import { Group, User } from '../models';
+import AddGroupModal from './Group/AddGroupModal';
 import DeleteGroupModal from './Group/DeleteGroupModal';
+import JoinGroupModal from './Group/JoinGroupModal';
 import ManageMembersModal from './Group/ManageMembersModal';
 
 

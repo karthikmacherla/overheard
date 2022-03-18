@@ -1,16 +1,9 @@
-// Confirm ${delete} this ${user}
-// okay, cancel 
-// request is made -> a toast loads
-
 import {
-  Badge,
-  Button, FormControl, FormErrorMessage, FormHelperText, FormLabel,
-  Input, Modal, ModalBody,
+  Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Modal, ModalBody,
   ModalCloseButton, ModalContent,
-  ModalHeader, ModalOverlay, useToast,
+  ModalHeader, ModalOverlay
 } from '@chakra-ui/react';
 import { UseMutationResult } from 'react-query';
-import { delete_group } from '../../fetcher';
 
 function ConfirmModal(props: {
   modalState: {

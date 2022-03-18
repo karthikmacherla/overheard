@@ -1,9 +1,7 @@
 import {
-  Badge,
-  Button, FormControl, FormErrorMessage, FormHelperText, FormLabel,
-  Input, Modal, ModalBody,
+  Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Modal, ModalBody,
   ModalCloseButton, ModalContent,
-  ModalHeader, ModalOverlay, useToast,
+  ModalHeader, ModalOverlay, useToast
 } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from 'react-query';
 import { delete_group } from '../../fetcher';

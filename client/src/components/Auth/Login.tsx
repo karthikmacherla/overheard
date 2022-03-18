@@ -21,14 +21,17 @@ function LoginButton(props: { handleSignIn: (u: User, s: string) => void }) {
     event.preventDefault();
     let user = event.target.email.value;
     let pass = event.target.password.value;
-
-    let res = await username_sign_in(user, pass);
-    if (res.error) {
-      setError(res.error);
-    } else {
-      let user: User = res.user;
-      props.handleSignIn(user, res.access_token);
-      handleExit();
+    try {
+      let res = await username_sign_in(user, pass);
+      if (res.error) {
+        setError(res.error);
+      } else {
+        let user: User = res.user;
+        props.handleSignIn(user, res.access_token);
+        handleExit();
+      }
+    } catch (err: any) {
+      setError(err.message);
     }
   }
 

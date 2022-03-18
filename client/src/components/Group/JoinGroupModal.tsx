@@ -1,11 +1,9 @@
 import {
-  Badge,
   Button, FormControl, FormErrorMessage, FormHelperText, FormLabel,
   Input, Modal, ModalBody,
   ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, useToast,
 } from '@chakra-ui/react';
-import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { join_group } from '../../fetcher';
 

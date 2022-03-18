@@ -7,7 +7,7 @@ import {
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { create_quote } from '../../fetcher';
-import { Group, Quote, User } from '../../models';
+import { Group, Quote } from '../../models';
 
 type CreateQuote = {
   quote: string,
@@ -18,7 +18,7 @@ type CreateQuote = {
 function AddBar(props: { groups: Array<Group>, group_idx: number }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const queryClient = useQueryClient();
-  const [quoteCode, setQuoteCode] = useState("");
+  const [quoteCode] = useState("");
 
   const currGroup = props.groups.reduce(
     (prev, curr) => curr.id === props.group_idx ? curr : prev)
@@ -29,7 +29,6 @@ function AddBar(props: { groups: Array<Group>, group_idx: number }) {
       onMutate: async (newQuote: CreateQuote) => {
         await queryClient.cancelQueries('groups')
         const previousQuotes = queryClient.getQueryData<Array<Quote>>(['quotes', newQuote.access_token])
-        const currOwner = queryClient.getQueryData<User>(['user', newQuote.access_token])
 
         if (previousQuotes) {
           queryClient.setQueryData<Array<Quote>>(['quotes', newQuote.access_token],

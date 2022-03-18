@@ -6,33 +6,29 @@ import {
   LinkIcon
 } from '@chakra-ui/icons';
 import {
-  Box, Button,
+  Button,
   Flex, Grid,
-  GridItem, Heading, Icon, Image, Table, Tbody, Td, Tr
+  GridItem, Heading, Icon, Image
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   FiHeart
 } from 'react-icons/fi';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { get_group_quotes } from '../fetcher';
-
-import { Quote, Comment, User } from '../models'
 
 interface QProps {
   group_id: number
 }
 
 function QuoteTab(props: QProps) {
-  const queryClient = useQueryClient();
   const groupId = props.group_id;
   const accessToken = sessionStorage.getItem('access_token') || '';
 
   const [showQuote, setShowQuote] = useState(true);
   const [idx, setIdx] = useState(0);
-  const [fontSize, setFontSize] = useState(5);
 
-  const { isError: isQuoteErr, data: quotes, error: quoteErr } = useQuery(['quotes', accessToken, groupId],
+  const { data: quotes } = useQuery(['quotes', accessToken, groupId],
     () => get_group_quotes(groupId, accessToken))
 
   function prevSlide() {
@@ -225,23 +221,5 @@ function RightButton({ handle }: { handle: () => void }) {
       as={ChevronRightIcon} />
   )
 }
-
-const QUOTES: Array<Quote> = [
-  {
-    message: "This is a very cool way to talk to people anonymously"
-  },
-  {
-    message: "Heyo"
-  }
-]
-
-const COMMENTS: Array<Comment> = [
-  {
-    message: "This is a very cool way to talk to people anonymously. There is a lot of text to unpack so we can see what happens in this event."
-  },
-  {
-    message: "Heyo"
-  }
-]
 
 export default QuoteTab;

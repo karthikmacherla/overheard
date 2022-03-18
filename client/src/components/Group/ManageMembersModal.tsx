@@ -1,19 +1,11 @@
-import { HamburgerIcon, AddIcon, CopyIcon, Icon, LinkIcon, StarIcon } from '@chakra-ui/icons';
+import { Icon } from '@chakra-ui/icons';
 import {
-  Avatar,
-  Badge,
-  Box,
-  Button, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel,
-  Input, Modal, ModalBody, Text,
-  ModalCloseButton, ModalContent,
-  useColorModeValue,
-  ModalHeader, ModalOverlay, useToast, Stack, VStack, Menu, MenuButton, IconButton, MenuItem, MenuList, useDisclosure,
+  Avatar, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text, useColorModeValue, useDisclosure, useToast, VStack
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import { FiMoreVertical, FiUsers, FiTrash } from 'react-icons/fi';
+import { FiMoreVertical, FiTrash } from 'react-icons/fi';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { get_users_in_group, get_user_complete, join_group, remove_user_from_group } from '../../fetcher';
-import { Group, User } from '../../models';
+import { get_users_in_group, remove_user_from_group } from '../../fetcher';
+import { User } from '../../models';
 import ConfirmModal from '../Shared/ConfirmModal';
 
 function ManageMembersModal(props: {

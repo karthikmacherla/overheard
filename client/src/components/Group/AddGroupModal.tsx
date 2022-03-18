@@ -1,17 +1,15 @@
 
-import { AddIcon } from '@chakra-ui/icons';
 import {
   Badge,
-  Button, FormControl, FormErrorMessage, FormHelperText, FormLabel,
+  Button, FormControl, FormErrorMessage, FormLabel,
   Input, Modal, ModalBody,
   ModalCloseButton, ModalContent,
-  ModalHeader, ModalOverlay, useDisclosure
+  ModalHeader, ModalOverlay
 } from '@chakra-ui/react';
+import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { create_group } from '../../fetcher';
-import { RoundButton } from '../Shared/Buttons';
-import { Group, User } from '../../models'
-import { useState } from 'react';
+import { Group, User } from '../../models';
 
 
 type CreateGroup = {

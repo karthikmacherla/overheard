@@ -12,13 +12,21 @@ const signup = async (email: string, name: string, password: string) => {
     'password': password
   }
 
-  return await fetch(`${endpoint}/auth/signup`, {
+  let res = await fetch(`${endpoint}/auth/signup`, {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json'
     }
   });
+
+  checkAuthorization(res);
+
+  if (!res.ok) {
+    throw new Error("unable to create account");
+  }
+
+  return res;
 }
 
 // get user info 

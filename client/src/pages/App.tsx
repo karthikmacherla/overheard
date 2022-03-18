@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { AddBar, SplashNav, LoggedInNav, NavBar } from '../components/Nav/NavBar'
-import GroupTab from '../components/GroupTab';
-import QuoteTab from '../components/QuoteTab';
-
-import { Grid, GridItem, Flex } from '@chakra-ui/react'
-
-import { getuser, get_user_complete, get_user_groups } from '../fetcher';
-
-import type { User, Group } from '../models';
-import { isError, useQuery, useQueryClient } from 'react-query';
+import { Flex, Grid, GridItem } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-
+import GroupTab from '../components/GroupTab';
+import { AddBar, LoggedInNav, NavBar, SplashNav } from '../components/Nav/NavBar';
+import QuoteTab from '../components/QuoteTab';
+import { get_user_complete, get_user_groups } from '../fetcher';
+import type { User } from '../models';
 
 function App() {
-  const queryClient = useQueryClient();
   const [accessToken, setAccessToken] = useState('')
   const [groupIdx, setGroupIdx] = useState<number>(-1)
-  const { isError: isUserError, data: user, error: userError } = useQuery(['user', accessToken],
+  const { data: user } = useQuery(['user', accessToken],
     () => get_user_complete(accessToken),
     {
       retry: (count, err: Error) => err.message !== 'Bad access token'
@@ -24,7 +19,7 @@ function App() {
 
   // Don't retry/enable if token is bad
   const validUser = user !== undefined;
-  const { isError: isGroupErr, data: groups, error: groupsError } = useQuery(['groups', accessToken],
+  const { data: groups } = useQuery(['groups', accessToken],
     () => get_user_groups(accessToken), { enabled: validUser })
 
   useEffect(() => {
@@ -42,7 +37,7 @@ function App() {
     if (groups && groups.length > 0 && groupIdx === -1) {
       setGroupIdx(groups[0].id)
     }
-  }, [groups])
+  }, [groups, groupIdx])
 
   const handleSignIn = (currUser: User, access_token: string) => {
     sessionStorage.setItem("access_token", access_token);

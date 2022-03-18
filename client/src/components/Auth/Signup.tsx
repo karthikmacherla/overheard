@@ -19,7 +19,7 @@ function SignupButton(props: { handleSignIn: (u: User, s: string) => void }) {
 
   const onSubmit = async (event: any) => {
     event.preventDefault();
-    let user = event.target.email.value;
+    let email = event.target.email.value;
     let name = event.target.name.value;
     let pass = event.target.password.value;
     let confpass = event.target.confpassword.value;
@@ -29,13 +29,13 @@ function SignupButton(props: { handleSignIn: (u: User, s: string) => void }) {
       return;
     }
 
-    let res = await signup(user, name, pass).then(res => res.json());
-    if (res.detail) {
-      setError("Cannot create account with the following username and password");
-    } else {
+    try {
+      let res = await signup(email, name, pass).then(res => res.json());
       let user = await getuser(res.access_token).then(res => res.json());
       props.handleSignIn(user, res.access_token);
       handleExit();
+    } catch (error: any) {
+      setError(error.message);
     }
   }
 
