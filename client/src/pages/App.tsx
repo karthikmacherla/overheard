@@ -62,10 +62,11 @@ function App() {
         p={4}
         my={5}
         mx={5}
+        bg={'blue.200'}
       >
         {user && groups ?
           <>
-            <GridItem rounded={'md'} boxShadow="2xl" bg={'white'} colSpan={2}>
+            <GridItem rounded={'md'} boxShadow="2xl" bg={'white'} h={'xl'} colSpan={2}>
               <GroupTab groups={groups} idx={groupIdx} setIdx={setGroupIdx} />
             </GridItem>
             <GridItem
@@ -78,7 +79,7 @@ function App() {
           <>
             <GridItem
               colStart={2} colSpan={5} rounded={'md'} boxShadow="2xl" bg={'white'}
-              minW={'2xl'} minH={'lg'} maxH={'xl'}>
+              h={'xl'} minW={'2xl'}>
               <QuoteTab group_id={groupIdx} />
             </GridItem>
           </>
