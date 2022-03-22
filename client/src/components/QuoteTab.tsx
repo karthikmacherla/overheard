@@ -4,6 +4,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   CloseIcon,
+  EmailIcon,
   LinkIcon,
   PhoneIcon
 } from '@chakra-ui/icons';
@@ -12,11 +13,11 @@ import {
   Button,
   Divider,
   Flex, Grid, Text,
-  GridItem, Heading, Icon, Image, useColorModeValue, VStack, MenuButton, Menu, IconButton, MenuItem, MenuList, useDisclosure, Input, InputGroup, InputLeftElement, InputRightElement
+  GridItem, Heading, Icon, Image, useColorModeValue, VStack, MenuButton, Menu, IconButton, MenuItem, MenuList, useDisclosure, Input, InputGroup, InputLeftElement, InputRightElement, Box
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import {
-  FiHeart, FiMoreVertical, FiTrash
+  FiHeart, FiMoreVertical, FiSend, FiTrash
 } from 'react-icons/fi';
 import { useQuery } from 'react-query';
 import { get_group_quotes } from '../fetcher';
@@ -155,14 +156,16 @@ function QuoteTab(props: QProps) {
 function CommentBar() {
 
   return <>
-    <InputGroup>
-      <InputLeftElement
-        pointerEvents='none'
-        children={<Avatar name={"Steve"} src='#' size={'sm'} />}
-      />
-      <Input variant='filled' size={'lg'} type='tel' placeholder='insert comment here' />
-      <InputRightElement children={<CheckIcon color='green.500' />} />
-    </InputGroup>
+    <Flex justifyContent={'space-between'}
+      width={"100%"}
+      alignItems={'center'}
+      m={1}>
+      <Avatar name={"John"} src='#' m={3} size={'sm'} />
+      <InputGroup mt={3} mb={3} >
+        <Input variant='unstyled' size={'lg'} type='tel' placeholder='insert comment here' />
+      </InputGroup>
+      <IconButton aria-label={'send'} m={3} icon={<FiSend />}></IconButton>
+    </Flex>
   </>
 
 }
