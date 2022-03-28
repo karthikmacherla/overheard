@@ -36,8 +36,9 @@ function AddBar(props: { groups: Array<Group>, group_idx: number }) {
               ...previousQuotes,
               {
                 message: newQuote.quote,
-                time: new Date(),
+                time: Date.now().toString(),
                 likes: 0,
+                id: Math.random(),
               },
             ]
           )

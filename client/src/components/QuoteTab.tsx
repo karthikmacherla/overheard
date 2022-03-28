@@ -21,9 +21,10 @@ import {
 } from 'react-icons/fi';
 import { useQuery } from 'react-query';
 import { get_group_quotes } from '../fetcher';
+import { CommentBar, Comments } from './Comment/Comments';
 
 interface QProps {
-  group_id: number
+  group_id: number,
 }
 
 function QuoteTab(props: QProps) {
@@ -128,84 +129,19 @@ function QuoteTab(props: QProps) {
         >
           <GridItem rowStart={1} colStart={15}><CloseButton handle={handleClose} /></GridItem>
           <GridItem rowStart={2} rowEnd={3} colStart={1} colEnd={16}> <Divider /> </GridItem>
-          <GridItem rowStart={2} rowEnd={11} colStart={1} colEnd={16}>
-            <VStack overflow={'auto'} h={"100%"}>
-              <Comment comment='To a first approximation, there is one compilation function for each nonterminal of the language syntax. The inputs to these functions are the static context and the piece of syntax (and its type) to be compiled. The output of such a function depends on which part of the program you are compiling: expressions evaluate to values, so their compilation function returns the code computing an operand; statements do not evaluate to values, but they do introduce new local variables, so their compilation function returns a new context and an instruction stream, etc. ' />
-              <Comment comment='hi' />
-              <Comment comment='hi' />
-              <Comment comment='hi' />
-              <Comment comment='hi' />
-              <Comment comment='hi' />
-              <Comment comment='hi' />
-              <Comment comment='hi' />
-              <Comment comment='hi' />
-              <Comment comment='hi' />
-              <Comment comment='hi' />
-              <Comment comment='hi' />
-            </VStack>
-          </GridItem>
-          <GridItem rowStart={11} rowEnd={12} colStart={1} colEnd={16}>
-            <CommentBar />
-          </GridItem>
+          {quotes && idx < quotes.length ? <>
+            <GridItem rowStart={2} rowEnd={11} colStart={1} colEnd={16}>
+              <Comments quote_id={quotes[idx].id} />
+            </GridItem>
+            <GridItem rowStart={11} rowEnd={12} colStart={1} colEnd={16}>
+              <CommentBar quote_id={quotes[idx].id} />
+            </GridItem>
+          </>
+            : <></>}
         </Grid>
       </Flex>
     )
   }
-}
-
-function CommentBar() {
-
-  return <>
-    <Flex justifyContent={'space-between'}
-      width={"100%"}
-      alignItems={'center'}
-      m={1}>
-      <Avatar name={"John"} src='#' m={3} size={'sm'} />
-      <InputGroup mt={3} mb={3} >
-        <Input variant='unstyled' size={'lg'} type='tel' placeholder='insert comment here' />
-      </InputGroup>
-      <IconButton aria-label={'send'} m={3} icon={<FiSend />}></IconButton>
-    </Flex>
-  </>
-
-}
-
-function Comment(props: { comment: string }) {
-  return (
-    <>
-      <Flex justifyContent={'space-between'}
-        width={"100%"}
-        _hover={{ bg: useColorModeValue('gray.100', 'gray.900') }}
-        alignItems={'center'}
-        rounded={'md'}>
-        <Flex justifyContent={'flex-start'} alignItems={'flex-start'}>
-          <Avatar name={"Steve"} src='#' m={3} size={'sm'} />
-          <Text fontSize={'md'} fontWeight={'light'} m={2}>{props.comment}</Text>
-        </Flex>
-        < CommentMenu />
-      </Flex >
-    </>)
-}
-
-
-/* Options to manage current member */
-const CommentMenu = (props: {}) => {
-  // Create modal states
-  const deleteState = useDisclosure();
-  return (<Menu>
-    <MenuButton
-      m={1}
-      mt={3}
-      as={IconButton}
-      aria-label='Options'
-      icon={<Icon w={5} h={5} as={FiMoreVertical} />}
-      variant='link'
-    />
-    <MenuList>
-      <MenuItem icon={<FiTrash />} onClick={deleteState.onOpen}>Remove User</MenuItem>
-    </MenuList>
-  </Menu>
-  )
 }
 
 

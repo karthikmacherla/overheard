@@ -263,8 +263,7 @@ def create_comment(
     user=Depends(get_current_user),
 ):
     try:
-        db_comment = crud.create_comment(db, user, comment)
-        return db_comment
+        return crud.create_comment(db, user, comment)
     except Exception as err:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=err.args)
 
@@ -275,5 +274,8 @@ def delete_comment(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    db_comment = crud.delete_comment(db, comment_id, user.id)
-    return db_comment
+    try:
+        res = crud.delete_comment(db, comment_id, user.id)
+        return res
+    except Exception as err:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=err.args)

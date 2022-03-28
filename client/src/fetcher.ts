@@ -1,4 +1,4 @@
-import { Group, Quote, User } from './models';
+import { Group, Quote, User, Comment } from './models';
 
 // TODO: Fix this 
 // const endpoint = `http://${config.server_host}:${config.server_port}`
@@ -242,6 +242,68 @@ const get_group_quotes = async (group_id: number, access_token: string): Promise
   return quotes;
 }
 
+const get_comments_for_quotes = async (quote_id: number, access_token: string): Promise<Array<Comment>> => {
+  let res = await fetch(`${endpoint}/comment/list_by_quote?quote_id=${quote_id}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  let quotes = await res.json();
+  if (quotes.detail) {
+    throw new Error("Bad params");
+  }
+
+  return quotes;
+}
+
+const create_comment = async (comment: string, quote_id: number, access_token: string) => {
+  let body = { "message": comment, "quote_id": quote_id }
+
+  let res = await fetch(`${endpoint}/comment/create`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  comment = await res.json();
+  console.log(comment);
+
+  if (!res.ok) {
+    throw new Error("Comment couldn't be created");
+  }
+
+  comment = await res.json();
+  return comment;
+}
+
+
+const delete_comment = async (comment_id: number, access_token: string): Promise<boolean> => {
+  let res = await fetch(`${endpoint}/comment/delete?comment_id=${comment_id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  if (!res.ok) {
+    throw new Error("Cannot join group with code.");
+  }
+
+  let is_successful = await res.json();
+  return is_successful;
+}
+
+
 function checkAuthorization(res: Response) {
   if (res.status === 401) {
     throw new Error("Bad access token");
@@ -257,6 +319,9 @@ export {
   signup,
   getuser,
   delete_group,
+  delete_comment,
+  create_comment,
+  get_comments_for_quotes,
   username_sign_in,
   get_user_complete,
   create_group,

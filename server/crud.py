@@ -12,8 +12,6 @@ logger = create_logger(__name__)
 
 
 # CUD group
-
-
 def create_group(
     db: Session, group_info: schemas.GroupCreate, user: models.User
 ) -> models.Group:
@@ -236,7 +234,7 @@ def update_comment(
 def delete_comment(db: Session, comment_id: id, user_id: int) -> bool:
     db_comment = get_quote(db, comment_id)
     if not db_comment:
-        return False
+        raise Exception("comment doesn't exist")
 
     if not db_comment.creator_id == user_id:
         raise Exception("user not owner of comment")
@@ -246,6 +244,23 @@ def delete_comment(db: Session, comment_id: id, user_id: int) -> bool:
     return True
 
 
+def list_comments_for_quote(db: Session, user: models.User, quote_id: int, limit=100):
+    if not user_can_access_quote(db, user, quote_id):
+        raise Exception("user can't access quote comments")
+    return (
+        db.query(models.Comment)
+        .filter(models.Comment.quote_id == quote_id)
+        .limit(limit)
+        .all()
+    )
+
+
+def user_can_access_quote(db: Session, user: models.User, quote_id: int):
+    quote = get_quote(db, quote_id)
+    return quote and user_in_group(user, quote.group_id)
+
+
+# CRUD Users
 def get_user_by_id(db: Session, user_id: int) -> models.User:
     user = db.query(models.User).filter(models.User.id == user_id).first()
     return user
@@ -283,15 +298,6 @@ def user_in_group(user: models.User, group_id: int) -> bool:
     return group_id in groups
 
 
-# Special Routes
-
-
-# get groups from user x
-# def get_groups_from_user(db, )
-# get comments of quote
-
-
-# get quotes in group (w/ pagination)
 def list_quotes_in_group(
     db: Session, group_id: int, user: models.User, limit: int = 100
 ):
@@ -301,22 +307,3 @@ def list_quotes_in_group(
         .limit(limit)
         .all()
     )
-
-
-def list_comments_for_quote(db: Session, user: models.User, quote_id: int, limit=100):
-    if not user_can_access_quote(db, user, quote_id):
-        raise Exception("user can't access quote comments")
-    return (
-        db.query(models.Comment)
-        .filter(models.Comment.quote_id == quote_id)
-        .limit(limit)
-        .all()
-    )
-
-
-def user_can_access_quote(db: Session, user: models.User, quote_id: int):
-    quote = get_quote(db, quote_id)
-    return quote and user_in_group(user, quote.group_id)
-
-
-# get quotes in local group (w/ pagination)

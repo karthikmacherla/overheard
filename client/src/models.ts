@@ -2,7 +2,7 @@ interface User {
   email: string,
   name: string,
   id: number,
-  profile_pic_url?: String,
+  profile_pic_url?: string,
 }
 
 interface Group {
@@ -15,15 +15,20 @@ interface Group {
 }
 
 interface Quote {
+  id: number,
   message: string,
   share_link?: URL | string,
-  time?: Date,
+  time?: string,
   likes?: number,
 }
 
 interface Comment {
+  id: number,
+  creator: User,
+  likes: number,
   message: string,
-  time?: Date
+  time?: string,
+  quote_id: number
 }
 
 
