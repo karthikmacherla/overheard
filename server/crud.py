@@ -54,7 +54,7 @@ def delete_group(db: Session, group_id: int):
     group = db.query(models.Group).get(group_id)
 
     if group:
-        db.query(models.Quotes).filter(models.Quotes.group_id == group_id).delete()
+        db.query(models.Quote).filter(models.Quote.group_id == group_id).delete()
         db.delete(group)
         db.commit()
         return True
@@ -143,7 +143,7 @@ def add_to_group(db: Session, group_id: int, user_to_add: int):
 # CRUD comments of quote
 def create_quote(db: Session, quote: schemas.QuoteCreate, user_id: int):
     try:
-        db_quote = models.Quotes(
+        db_quote = models.Quote(
             message=quote.message,
             group_id=quote.group_id,
             creator_id=user_id,
@@ -159,15 +159,15 @@ def create_quote(db: Session, quote: schemas.QuoteCreate, user_id: int):
         return None
 
 
-def read_quote(db: Session, quote_id: int) -> models.Quotes:
-    quote = db.query(models.Quotes).filter(models.Quotes.id == quote_id).first()
+def get_quote(db: Session, quote_id: int) -> models.Quote:
+    quote = db.query(models.Quote).filter(models.Quote.id == quote_id).first()
     if not quote:
         return None
     return quote
 
 
 def update_quote(db: Session, quote_id: int, quote: schemas.QuoteCreate):
-    db_quote = read_quote(db, quote_id)
+    db_quote = get_quote(db, quote_id)
     if not db_quote:
         return False
 
@@ -176,10 +176,13 @@ def update_quote(db: Session, quote_id: int, quote: schemas.QuoteCreate):
     return True
 
 
-def delete_quote(db: Session, quote_id: int) -> bool:
-    db_quote = read_quote(db, quote_id)
+def delete_quote(db: Session, quote_id: int, user_id: int) -> bool:
+    db_quote = get_quote(db, quote_id)
     if not db_quote:
         return False
+
+    if not db_quote.creator_id == user_id:
+        raise Exception("user not owner of quote")
 
     db.delete(db_quote)
     db.commit()
@@ -187,38 +190,41 @@ def delete_quote(db: Session, quote_id: int) -> bool:
 
 
 # CRUD comments
-def read_comment(db: Session, comment_id: int) -> models.Comments:
-    comment = db.query(models.Comments).filter(models.Comments.id == comment_id).first()
+def get_comment(db: Session, comment_id: int) -> models.Comment:
+    comment = db.query(models.Comment).filter(models.Comment.id == comment_id).first()
     if not comment:
         return
     return comment
 
 
 def create_comment(
-    db: Session, comment: schemas.CommentCreate, user_id: int, quote_id: int
-) -> models.Comments:
+    db: Session, user: models.User, comment: schemas.CommentCreate
+) -> models.Comment:
     try:
-        db_comment = models.Comments(
+        if not user_can_access_quote(db, user, comment.quote_id):
+            raise Exception("user can't access quote")
+
+        db_comment = models.Comment(
             message=comment.message,
             likes=0,
             time=datetime.now(),
-            creator_id=user_id,
-            quote_id=quote_id,
+            creator_id=user.id,
+            quote_id=comment.quote_id,
         )
 
         db.add(db_comment)
         db.commit()
         db.refresh(db_comment)
         return db_comment
-    except IntegrityError:
+    except IntegrityError as err:
         db.rollback()
-        return
+        raise err
 
 
 def update_comment(
     db: Session, comment: schemas.CommentCreate, comment_id: id
-) -> models.Comments:
-    db_comment = read_comment(db, comment_id)
+) -> models.Comment:
+    db_comment = get_comment(db, comment_id)
     if not db_comment:
         return False
 
@@ -227,10 +233,13 @@ def update_comment(
     return True
 
 
-def delete_comment(db: Session, comment_id: id) -> bool:
-    db_comment = read_quote(db, comment_id)
+def delete_comment(db: Session, comment_id: id, user_id: int) -> bool:
+    db_comment = get_quote(db, comment_id)
     if not db_comment:
         return False
+
+    if not db_comment.creator_id == user_id:
+        raise Exception("user not owner of comment")
 
     db.delete(db_comment)
     db.commit()
@@ -287,11 +296,27 @@ def list_quotes_in_group(
     db: Session, group_id: int, user: models.User, limit: int = 100
 ):
     return (
-        db.query(models.Quotes)
-        .filter(models.Quotes.group_id == group_id)
+        db.query(models.Quote)
+        .filter(models.Quote.group_id == group_id)
         .limit(limit)
         .all()
     )
+
+
+def list_comments_for_quote(db: Session, user: models.User, quote_id: int, limit=100):
+    if not user_can_access_quote(db, user, quote_id):
+        raise Exception("user can't access quote comments")
+    return (
+        db.query(models.Comment)
+        .filter(models.Comment.quote_id == quote_id)
+        .limit(limit)
+        .all()
+    )
+
+
+def user_can_access_quote(db: Session, user: models.User, quote_id: int):
+    quote = get_quote(db, quote_id)
+    return quote and user_in_group(user, quote.group_id)
 
 
 # get quotes in local group (w/ pagination)

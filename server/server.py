@@ -6,6 +6,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
+from fastapi import Request
 
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -241,3 +242,38 @@ def list_quotes_for_group(
             detail="user not in group",
         )
     return crud.list_quotes_in_group(db, group_id, user)
+
+
+@app.get("/comment/list_by_quote", response_model=List[schemas.Comment])
+def list_comments_for_quote(
+    quote_id: int,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    try:
+        return crud.list_comments_for_quote(db, user, quote_id)
+    except Exception as err:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=err.args)
+
+
+@app.post("/comment/create", response_model=schemas.Comment)
+def create_comment(
+    comment: schemas.CommentCreate,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    try:
+        db_comment = crud.create_comment(db, user, comment)
+        return db_comment
+    except Exception as err:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=err.args)
+
+
+@app.put("/comment/delete")
+def delete_comment(
+    comment_id: int,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    db_comment = crud.delete_comment(db, comment_id, user.id)
+    return db_comment

@@ -69,6 +69,7 @@ class QuoteCreate(QuoteBase):
 
 
 class Quote(QuoteBase):
+    id: int
     time: datetime
     likes: int
     group_id: int
@@ -91,14 +92,16 @@ class CommentBase(BaseModel):
 
 
 class CommentCreate(CommentBase):
-    pass
+    quote_id: int
 
 
 class Comment(CommentCreate):
     creator: User
     likes: int
     time: datetime
-    quote: Quote
+
+    class Config:
+        orm_mode = True
 
 
 Group.update_forward_refs()

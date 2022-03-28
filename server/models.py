@@ -33,7 +33,7 @@ class User(Base):
     groups = relationship("Group", secondary=association_table, back_populates="users")
 
 
-class Quotes(Base):
+class Quote(Base):
     __tablename__ = "quotes"
     id = Column(Integer, primary_key=True, index=True)
     message = Column(String)
@@ -48,7 +48,7 @@ class Quotes(Base):
     # TOOD: geohash
 
 
-class Comments(Base):
+class Comment(Base):
     __tablename__ = "comments"
     id = Column(Integer, primary_key=True, index=True)
     message = Column(String)
