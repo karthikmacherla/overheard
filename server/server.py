@@ -274,8 +274,4 @@ def delete_comment(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    try:
-        res = crud.delete_comment(db, comment_id, user.id)
-        return res
-    except Exception as err:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=err.args)
+    return crud.delete_comment(db, comment_id, user.id)

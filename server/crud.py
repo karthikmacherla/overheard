@@ -232,12 +232,16 @@ def update_comment(
 
 
 def delete_comment(db: Session, comment_id: id, user_id: int) -> bool:
-    db_comment = get_quote(db, comment_id)
+    db_comment = get_comment(db, comment_id)
     if not db_comment:
-        raise Exception("comment doesn't exist")
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_ENTITY, "comment doesn't exist"
+        )
 
     if not db_comment.creator_id == user_id:
-        raise Exception("user not owner of comment")
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_ENTITY, "user not owner of comment"
+        )
 
     db.delete(db_comment)
     db.commit()
@@ -257,6 +261,7 @@ def list_comments_for_quote(db: Session, user: models.User, quote_id: int, limit
 
 def user_can_access_quote(db: Session, user: models.User, quote_id: int):
     quote = get_quote(db, quote_id)
+    user = get_user_by_id(db, user.id)
     return quote and user_in_group(user, quote.group_id)
 
 

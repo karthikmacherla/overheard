@@ -96,6 +96,7 @@ class CommentCreate(CommentBase):
 
 
 class Comment(CommentCreate):
+    id: int
     creator: User
     likes: int
     time: datetime

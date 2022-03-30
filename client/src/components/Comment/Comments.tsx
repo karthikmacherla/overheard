@@ -154,7 +154,10 @@ const CommentMenu = (props: { user_id?: number, quote_id: number, commentObj: Co
       onSettled: () => queryClient.invalidateQueries(['comments', props.quote_id, accessToken])
     })
 
-  const deleteClick = () => deleteCommentMutation.mutate(props.commentObj.id);
+  const deleteClick = () => {
+    console.log(props.commentObj.id);
+    deleteCommentMutation.mutate(props.commentObj.id);
+  }
 
   return (<Menu>
     <MenuButton

@@ -1,27 +1,21 @@
 import {
-  ChatIcon,
-  CheckIcon,
-  ChevronLeftIcon,
+  ChatIcon, ChevronLeftIcon,
   ChevronRightIcon,
-  CloseIcon,
-  EmailIcon,
-  LinkIcon,
-  PhoneIcon
+  CloseIcon, LinkIcon
 } from '@chakra-ui/icons';
 import {
-  Avatar,
   Button,
   Divider,
-  Flex, Grid, Text,
-  GridItem, Heading, Icon, Image, useColorModeValue, VStack, MenuButton, Menu, IconButton, MenuItem, MenuList, useDisclosure, Input, InputGroup, InputLeftElement, InputRightElement, Box
+  Flex, Grid, GridItem, Heading, Icon, Image
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import {
-  FiHeart, FiMoreVertical, FiSend, FiTrash
+  FiHeart
 } from 'react-icons/fi';
 import { useQuery } from 'react-query';
 import { get_group_quotes } from '../fetcher';
 import { CommentBar, Comments } from './Comment/Comments';
+import { RoundButton } from './Shared/Buttons';
 
 interface QProps {
   group_id: number,
@@ -70,6 +64,12 @@ function QuoteTab(props: QProps) {
     return () => document.removeEventListener("keydown", handleArrowKeys, false);
   })
 
+
+  const CommentButton = () => <RoundButton hoverable={true} onClick={handleClose} ><ChatIcon /></RoundButton>;
+  const ShareButton = () => <RoundButton hoverable={true}  ><LinkIcon /></RoundButton>;
+  const LikeButton = () => <RoundButton hoverable={true} ><Icon as={FiHeart} /></RoundButton>;
+  const CloseButton = () => <RoundButton hoverable={true} onClick={handleClose}><CloseIcon /></RoundButton>;
+
   // all handling functions
   if (showQuote) {
     // Show quote block 
@@ -96,7 +96,7 @@ function QuoteTab(props: QProps) {
             </Flex>
           </GridItem>
           {/* Share buttons */}
-          <GridItem colStart={15}><CommentButton handle={handleClose} /></GridItem>
+          <GridItem colStart={15}><CommentButton /></GridItem>
           <GridItem colStart={15} ><ShareButton /></GridItem>
           <GridItem colStart={15} ><LikeButton /></GridItem>
 
@@ -127,7 +127,7 @@ function QuoteTab(props: QProps) {
           h={"100%"}
           w={"100%"}
         >
-          <GridItem rowStart={1} colStart={15}><CloseButton handle={handleClose} /></GridItem>
+          <GridItem rowStart={1} colStart={15}><CloseButton /></GridItem>
           <GridItem rowStart={2} rowEnd={3} colStart={1} colEnd={16}> <Divider /> </GridItem>
           {quotes && idx < quotes.length ? <>
             <GridItem rowStart={2} rowEnd={11} colStart={1} colEnd={16}>
@@ -143,63 +143,6 @@ function QuoteTab(props: QProps) {
       </Flex>
     )
   }
-}
-
-
-function CloseButton({ handle }: { handle: () => void }) {
-  return (
-    <Button
-      rounded={'full'}
-      bg={'red.400'}
-      color={'white'}
-      // h={"50px"} w={"50px"}
-      onClick={handle}>
-      <CloseIcon />
-    </Button>
-  )
-}
-
-function CommentButton({ handle }: { handle: () => void }) {
-  return (
-    <Button
-      transition={'all .3s ease'}
-      opacity={0}
-      _groupHover={{ opacity: '100%' }}
-      rounded={'full'}
-      bg={'red.400'}
-      color={'white'}
-      onClick={handle}>
-      <ChatIcon />
-    </Button>
-  )
-}
-
-function ShareButton() {
-  return (
-    <Button
-      transition={'all .3s ease'}
-      opacity={0}
-      _groupHover={{ opacity: '100%' }}
-      rounded={'full'}
-      bg={'red.400'}
-      color={'white'}>
-      <LinkIcon />
-    </Button>
-  )
-}
-
-function LikeButton() {
-  return (
-    <Button
-      transition={'all .3s ease'}
-      opacity={0}
-      _groupHover={{ opacity: '100%' }}
-      rounded={'full'}
-      bg={'red.400'}
-      color={'white'}>
-      <Icon as={FiHeart} />
-    </Button>
-  )
 }
 
 function LeftButton({ handle }: { handle: () => void }) {

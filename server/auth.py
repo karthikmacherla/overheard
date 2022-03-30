@@ -76,7 +76,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> models.User:
         raise credentials_exception
     user = crud.get_user_by_email(get_db(), token_data.username)
     log.debug(f"user {user.email},{user.name}")
-
     if user is None:
         raise credentials_exception
     return user

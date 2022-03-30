@@ -1,30 +1,26 @@
 import { Button } from "@chakra-ui/react";
 
-function RoundButton(props: {
-  handle?: () => void,
-  children: React.ReactNode,
-  hoverable?: boolean
-}) {
+function RoundButton(props: any) {
+  // const color = useColorModeValue('white', 'white')
   return props.hoverable ?
     (<Button
-      h={10}
-      w={10}
+      rounded={'full'}
+      bg={'clear'}
+      color={'red.400'}
       transition={'all .3s ease'}
       opacity={0}
       _groupHover={{ opacity: '100%' }}
-      rounded={'full'}
-      bg={'red.400'}
-      color={'white'}
-      onClick={props.handle}>
+      _hover={{ bg: 'red.400', color: 'white' }}
+      {...props}
+    >
       {props.children}
     </Button>) :
     (<Button
-      h={10}
-      w={10}
       rounded={'full'}
-      bg={'red.400'}
-      color={'white'}
-      onClick={props.handle}>
+      bg={'clear'}
+      color={'red.400'}
+      _hover={{ bg: 'red.400', color: 'white' }}
+      {...props}>
       {props.children}
     </Button>)
 }
