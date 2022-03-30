@@ -133,6 +133,7 @@ function QuoteTab(props: QProps) {
             <GridItem rowStart={2} rowEnd={11} colStart={1} colEnd={16}>
               <Comments quote_id={quotes[idx].id} />
             </GridItem>
+            <GridItem rowStart={11} rowEnd={12} colStart={1} colEnd={16}> <Divider /> </GridItem>
             <GridItem rowStart={11} rowEnd={12} colStart={1} colEnd={16}>
               <CommentBar quote_id={quotes[idx].id} />
             </GridItem>

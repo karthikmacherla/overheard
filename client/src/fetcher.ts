@@ -296,7 +296,7 @@ const delete_comment = async (comment_id: number, access_token: string): Promise
   checkAuthorization(res);
 
   if (!res.ok) {
-    throw new Error("Cannot join group with code.");
+    throw new Error("Cannot delete comment");
   }
 
   let is_successful = await res.json();

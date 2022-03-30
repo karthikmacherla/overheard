@@ -1,13 +1,13 @@
 import {
   Avatar, Box, Flex, Icon, IconButton,
   Input, InputGroup, Menu, MenuButton, MenuItem, Text,
-  MenuList, useColorModeValue, useDisclosure, VStack, FormControl,
+  MenuList, useColorModeValue, VStack, FormControl,
 } from "@chakra-ui/react";
 
 import { FiSend, FiMoreVertical, FiTrash } from "react-icons/fi";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { create_comment, get_comments_for_quotes, get_user_complete } from "../../fetcher";
-import { Comment, Quote, User } from '../../models';
+import { create_comment, delete_comment, get_comments_for_quotes } from "../../fetcher";
+import { Comment, User } from '../../models';
 
 
 import TimeAgo from 'javascript-time-ago'
@@ -17,11 +17,6 @@ TimeAgo.addDefaultLocale(en)
 
 // Create formatter (English).
 const timeAgo = new TimeAgo('en-US')
-
-// make queries
-// fill in data 
-// pass necessary info
-// cmd + C where possible
 
 function Comments(props: { quote_id: number }) {
   const accessToken = sessionStorage.getItem('access_token') || '';
@@ -36,7 +31,7 @@ function Comments(props: { quote_id: number }) {
   return <>
     <VStack overflow={'auto'} h={"100%"}>
       {(comments || []).map((item, i) => {
-        return < CommentItem key={item.id} commentObj={item} />
+        return < CommentItem key={i} commentObj={item} quote_id={props.quote_id} />
       })}
     </VStack>
   </>
@@ -49,6 +44,12 @@ function CommentBar(props: { quote_id: number }) {
   const [comment, setComment] = useState('')
 
   const handleCommentChange = (e: any) => setComment(e.target.value)
+
+  const handleKeyDown = (e: any) => {
+    if (e.key === 'Enter') {
+      addCommentMutation.mutate(comment);
+    }
+  }
 
   const addCommentMutation = useMutation(
     (message: string) => create_comment(message, props.quote_id, accessToken),
@@ -82,6 +83,7 @@ function CommentBar(props: { quote_id: number }) {
         }
       },
       onSettled: (data, err, variables) => {
+        setComment('');
         queryClient.invalidateQueries(['comments', props.quote_id, accessToken])
       },
     })
@@ -99,7 +101,10 @@ function CommentBar(props: { quote_id: number }) {
         <Avatar name={"John"} src='#' m={3} size={'sm'} />
         <InputGroup mt={3} mb={3} >
           <Input variant='unstyled' size={'lg'} type='text' name='comment'
-            placeholder='insert comment here' onChange={handleCommentChange} />
+            placeholder='insert comment here'
+            value={comment}
+            onChange={handleCommentChange}
+            onKeyDown={handleKeyDown} />
         </InputGroup>
         <IconButton type='submit' aria-label={'send'} m={3} icon={<FiSend />} onClick={submit} ></IconButton>
       </Flex>
@@ -108,8 +113,12 @@ function CommentBar(props: { quote_id: number }) {
 
 }
 
-function CommentItem(props: { commentObj: Comment }) {
+function CommentItem(props: { commentObj: Comment, quote_id: number }) {
   let { commentObj } = props;
+  const queryClient = useQueryClient();
+  const accessToken = sessionStorage.getItem('access_token') || '';
+  var user = queryClient.getQueryData<User>(['user', accessToken]);
+
   let approxDate = timeAgo.format(new Date(commentObj.time || Date.now()));
 
   return (
@@ -129,16 +138,24 @@ function CommentItem(props: { commentObj: Comment }) {
             <Text fontSize={'md'} fontWeight={'light'} >{commentObj.message}</Text>
           </Box>
         </Flex>
-        < CommentMenu />
+        <CommentMenu user_id={user?.id} quote_id={props.quote_id} commentObj={props.commentObj} />
       </Flex >
     </>)
 }
 
 
 /* Options to manage current member */
-const CommentMenu = (props: {}) => {
-  // Create modal states
-  const deleteState = useDisclosure();
+const CommentMenu = (props: { user_id?: number, quote_id: number, commentObj: Comment }) => {
+  const queryClient = useQueryClient();
+  const accessToken = sessionStorage.getItem('access_token') || '';
+  const deleteCommentMutation = useMutation(
+    (id: number) => delete_comment(id, accessToken),
+    {
+      onSettled: () => queryClient.invalidateQueries(['comments', props.quote_id, accessToken])
+    })
+
+  const deleteClick = () => deleteCommentMutation.mutate(props.commentObj.id);
+
   return (<Menu>
     <MenuButton
       m={1}
@@ -149,7 +166,9 @@ const CommentMenu = (props: {}) => {
       variant='link'
     />
     <MenuList>
-      <MenuItem icon={<FiTrash />} onClick={deleteState.onOpen}>Remove User</MenuItem>
+      {props.user_id === props.commentObj.creator.id ?
+        <MenuItem icon={<FiTrash />} onClick={deleteClick}>Delete Comment</MenuItem>
+        : <></>}
     </MenuList>
   </Menu>
   )
