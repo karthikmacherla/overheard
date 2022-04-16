@@ -1,8 +1,11 @@
 import { Group, Quote, User, Comment } from './models';
 
-// TODO: Fix this 
-// const endpoint = `http://${config.server_host}:${config.server_port}`
-const endpoint = `http://localhost:8000`
+const host = process.env.REACT_APP_SERVER_HOST
+const port = process.env.REACT_APP_SERVER_PORT
+const endpoint = `http://${host}:${port}`
+
+console.log("hi this worked");
+console.log(`endpoint ${endpoint}`);
 
 
 const signup = async (email: string, name: string, password: string) => {

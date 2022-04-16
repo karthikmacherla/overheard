@@ -5,7 +5,7 @@ from config import get_config
 
 config = get_config()
 
-SQLALCHEMY_DATABASE_URL = config["DATABASE_URL"]
+SQLALCHEMY_DATABASE_URL = config.database_url
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )

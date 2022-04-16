@@ -1,4 +1,3 @@
-import colorlog
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -16,9 +15,7 @@ from sqlalchemy.orm import Session
 from config import *
 from auth import *
 from utils import *
-import crud
-import models
-import schemas
+import crud, models, schemas
 
 
 set_up_database()
@@ -39,6 +36,8 @@ app.add_middleware(
 
 @app.get("/")
 def root():
+    log.error("rerouting")
+    log.info("msg")
     return RedirectResponse("/docs")
 
 
@@ -49,7 +48,7 @@ def google_login_for_access_token(token: str):
         # Specify the CLIENT_ID of the app that accesses the backend:
 
         idinfo = id_token.verify_oauth2_token(
-            token, requests.Request(), config["GOOGLE_CLIENT_ID"]
+            token, requests.Request(), config.google_client_id
         )
 
         userid = idinfo["sub"]

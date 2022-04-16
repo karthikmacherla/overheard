@@ -18,9 +18,9 @@ from config import get_config
 config = get_config()
 log = create_logger(__name__)
 
-SECRET_KEY = config["JWT_SECRET"]
-ALGORITHM = config["ALGORITHMS"]
-ACCESS_TOKEN_EXPIRE_MINUTES = int(config["ACCESS_TOKEN_EXPIRE_MINUTES"])
+SECRET_KEY = config.jwt_secret
+ALGORITHM = config.hash_algo
+ACCESS_TOKEN_EXPIRE_MINUTES = int(config.access_token_expire_minutes)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/username")
 
