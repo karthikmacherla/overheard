@@ -1,0 +1,89 @@
+name: Build Overheard and Deploy
+
+# Run this workflow every time a new commit pushed to your repository
+on: push
+
+env:
+  REGISTRY: ghcr.io
+  SERVER_IMAGE_NAME: overheard-backend
+  FRONTEND_IMAGE_NAME: overheard-frontend
+  sha: ${{ github.sha }}
+  REPO: ${{ github.repository }}
+
+jobs:
+  # Set the job key. The key is displayed as the job name
+  # when a job name is not provided
+  test:
+    # Name the Job
+    name: Test application
+    # Set the type of machine to run on
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+      - name: Install dependencies
+        run: |
+          cd server
+          poetry install
+      - name: Run tests
+        run: |
+          cd server
+          poetry run python test_crud.py
+
+  build:
+    # Name the Job
+    name: Build and publish docker image
+    # Set the type of machine to run on
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push server image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: server
+          push: ${{ github.ref == 'refs/heads/master' }}
+          tags: ${{ env.REGISTRY }}/${{ env.REPO }}/${{ env.SERVER_IMAGE_NAME }}:${{ env.sha }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: client
+          push: ${{ github.ref == 'refs/heads/master' }}
+          tags: ${{ env.REGISTRY }}/${{ env.REPO }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ env.sha }}
+
+  # deploy:
+  #   name: Deploy latest version of code
+  #   if: github.ref == 'refs/heads/master'
+  #   needs: build
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-1
+  #     - name: Fetch kubeconfig
+  #       run: |
+  #         aws eks update-kubeconfig --region us-east-1 --name cis188 --role-arn arn:aws:iam::474844133309:role/kmacher --alias cis188
+  #         kubectl config set-context --current --namespace=kmacher
+  #     - name: Deploy
+  #       run: |
+  #         helm upgrade --install aang bender-catalog --repo https://helm.cis188.org -f installation-values.yaml --set cronjob.tag=${{ env.sha }} --set web.tag=${{ env.sha }}

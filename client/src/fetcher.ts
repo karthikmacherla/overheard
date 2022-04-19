@@ -1,11 +1,14 @@
 import { Group, Quote, User, Comment } from './models';
 
-const host = process.env.REACT_APP_SERVER_HOST
-const port = process.env.REACT_APP_SERVER_PORT
+import env from 'react-dotenv';
+
+const host = env.SERVER_HOST_PROD || process.env.REACT_APP_SERVER_HOST;
+const port = env.REACT_APP_SERVER_PORT || process.env.REACT_APP_SERVER_PORT;
 const endpoint = `http://${host}:${port}`
 
 console.log("hi this worked");
 console.log(`endpoint ${endpoint}`);
+console.log(process.env);
 
 
 const signup = async (email: string, name: string, password: string) => {
