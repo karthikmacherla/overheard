@@ -61,14 +61,14 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: server
-          push: ${{ github.ref == 'refs/heads/master' }}
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ env.REGISTRY }}/${{ env.REPO }}/${{ env.SERVER_IMAGE_NAME }}:${{ env.sha }}
 
       - name: Build and push frontend image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: client
-          push: ${{ github.ref == 'refs/heads/master' }}
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ env.REGISTRY }}/${{ env.REPO }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ env.sha }}
 
   # deploy:
