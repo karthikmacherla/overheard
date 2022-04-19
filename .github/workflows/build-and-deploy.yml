@@ -23,6 +23,9 @@ jobs:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Setup python
+        with:
+          python-version: "3.10"
       - name: Install Poetry
         uses: snok/install-poetry@v1
       - name: Install dependencies
