@@ -62,7 +62,6 @@ function App() {
         p={4}
         my={5}
         mx={5}
-        bg={'blue.200'}
       >
         {user && groups ?
           <>
