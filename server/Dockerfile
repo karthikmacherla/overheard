@@ -14,4 +14,4 @@ RUN poetry install --no-dev
 
 COPY . /app/
 
-CMD ["poetry", "run", "uvicorn", "server:app", "--host", "0.0.0.0"]
+CMD ["poetry", "run", "uvicorn", "server:app", "--host", "0.0.0.0", "--root-path", "/api"]
