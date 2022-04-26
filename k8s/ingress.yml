@@ -16,6 +16,16 @@ spec:
                 name: frontend
                 port:
                   number: 3000
+    - host: "kmacher.cis188.org"
+      http:
+        paths:
+          - path: "/api"
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8000
 
   tls:
     - hosts:

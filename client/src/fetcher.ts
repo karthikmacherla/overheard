@@ -1,8 +1,7 @@
 import { Group, Quote, User, Comment } from './models';
 
 const host = process.env.REACT_APP_SERVER_HOST;
-const port = process.env.REACT_APP_SERVER_PORT;
-const endpoint = `http://${host}:${port}`
+const endpoint = `${host}`
 
 console.log("hi this worked");
 console.log(`endpoint ${endpoint}`);

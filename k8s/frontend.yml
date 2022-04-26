@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/karthikmacherla/overheard/overheard-frontend:main
+          image: ghcr.io/karthikmacherla/overheard/overheard-frontend:sha-a731f33
           resources:
             limits:
               memory: "128Mi"

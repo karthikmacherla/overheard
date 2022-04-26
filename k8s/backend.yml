@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/karthikmacherla/overheard/overheard-backend:main
+          image: ghcr.io/karthikmacherla/overheard/overheard-backend:sha-a731f33
           env:
             - name: DATABASE_URL
               value: "sqlite:///./sql_test_app.db"

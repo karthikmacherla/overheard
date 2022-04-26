@@ -97,14 +97,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.REPO }}/${{ env.FRONTEND_IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
+            # type=ref,event=branch
             type=semver,pattern={{raw}}
             type=sha
       - name: Inject .env file
         run: |
           touch client/.env
-          echo "REACT_APP_SERVER_HOST = backend" >> client/.env
-          echo "REACT_APP_SERVER_PORT = 8000" >> client/.env
+          echo "REACT_APP_SERVER_HOST = https://kmacher.cis188.org/api" >> client/.env
 
       - name: Build and push frontend image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
