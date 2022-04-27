@@ -65,7 +65,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=semver,pattern={{raw}}
-            type=sha
+            type=sha,prefix=,format=long
 
       - name: Build and push server image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
@@ -134,8 +134,8 @@ jobs:
       - name: Deploy
         run: |
           helm upgrade --install aang ./overheard-catalog \
-          --set frontend.tag=${{ env.sha }} \
-          --set backend.tag=${{ env.sha }} \
+          --set frontend.tag=${{ github.sha }} \
+          --set backend.tag=${{ github.sha }} \
           --set additional.google_client_id=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }} \
           --set additional.jwt_secret=${{ secrets.JWT_SECRET }} \
           --set additional.algorithms=${{ secrets.ALGORITHMS }}
