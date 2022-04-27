@@ -99,7 +99,7 @@ jobs:
           tags: |
             # type=ref,event=branch
             type=semver,pattern={{raw}}
-            type=sha
+            type=sha,prefix=,format=long
       - name: Inject .env file
         run: |
           touch client/.env
