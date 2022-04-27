@@ -1,38 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: backend-{{ .Release.Name }}
 spec:
+  replicas: {{ .Values.backend.replicas }}
   selector:
     matchLabels:
-      app: backend
+      app: backend-{{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: backend
+        app: backend-{{ .Release.Name }}
     spec:
       containers:
         - name: backend
-          image: ghcr.io/karthikmacherla/overheard/overheard-backend:sha-8970f65
+          image: {{ .Values.backend.image }}:{{ .Values.backend.tag }}
           env:
             - name: DATABASE_URL
-              value: "sqlite:///./sql_test_app.db"
+              value: {{ .Values.backend.database_url }}
             - name: ACCESS_TOKEN_EXPIRE_MINUTES
               value: "30"
             - name: GOOGLE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: backend-secret
+                  name: backend-secret-{{ .Release.Name }}
                   key: google_client_id
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: backend-secret
+                  name: backend-secret-{{ .Release.Name }}
                   key: jwt_secret
             - name: ALGORITHMS
               valueFrom:
                 secretKeyRef:
-                  name: backend-secret
+                  name: backend-secret-{{ .Release.Name }}
                   key: algorithms
           resources:
             limits:
@@ -44,10 +45,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend
+  name: backend-{{ .Release.Name }}
 spec:
   selector:
-    app: backend
+    app: backend-{{ .Release.Name }}
   ports:
     - port: 8000
       targetPort: 8000

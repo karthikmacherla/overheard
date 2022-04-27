@@ -1,33 +1,33 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: api-ingress
+  name: api-ingress-{{ .Release.Name }}
   annotations:
     traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
 spec:
   rules:
-    - host: "kmacher.cis188.org"
+    - host: {{ .Values.application.ingress.host }}
       http:
         paths:
           - path: "/api"
             pathType: Prefix
             backend:
               service:
-                name: backend
+                name: backend-{{ .Release.Name }}
                 port:
                   number: 8000
-    - host: "kmacher.cis188.org"
+    - host: {{ .Values.application.ingress.host }}
       http:
         paths:
           - path: "/"
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: frontend-{{ .Release.Name }}
                 port:
                   number: 3000
 
   tls:
     - hosts:
-        - "kmacher.cis188.org"
-      secretName: kmacher-cis188-org-tls
+        - {{ .Values.application.ingress.host }}
+      secretName: {{ .Values.application.ingress.secretName }}

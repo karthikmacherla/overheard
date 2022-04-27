@@ -1,0 +1,22 @@
+# Default values for bender-catalog.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+application:
+  # This is bad practice! In the real world, these secrets should be hidden somehow,
+  # likely through a secret manager like Vault.
+  ingress:
+    host: kmacher.cis188.org
+    path: "/"
+    secretName: "kmacher-cis188-org-tls"
+
+frontend:
+  image: ghcr.io/karthikmacherla/overheard/overheard-frontend
+  tag: sha-8970f65
+
+backend:
+  image: ghcr.io/karthikmacherla/overheard/overheard-backend
+  tag: sha-8970f65
+  database_url: sqlite:///./sql_test_app.db
+  replicas: 1
+

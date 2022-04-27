@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: frontend-{{ .Release.Name }}
 spec:
   selector:
     matchLabels:
-      app: frontend
+      app: frontend-{{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: frontend
+        app: frontend-{{ .Release.Name }}
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/karthikmacherla/overheard/overheard-frontend:sha-8970f65
+          image: {{ .Values.frontend.image }}:{{ .Values.frontend.tag }}
           resources:
             limits:
               memory: "128Mi"
@@ -24,10 +24,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: frontend-{{ .Release.Name }}
 spec:
   selector:
-    app: frontend
+    app: frontend-{{ .Release.Name }}
   ports:
     - port: 3000
       targetPort: 80
