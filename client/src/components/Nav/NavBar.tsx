@@ -2,7 +2,7 @@ import {
   ChevronDownIcon, CloseIcon, HamburgerIcon
 } from '@chakra-ui/icons';
 import {
-  Box, Collapse, Flex, Icon, IconButton, Link, Stack, Text,
+  Box, Collapse, Flex, Heading, Icon, IconButton, Link, Stack, Text,
   useBreakpointValue, useColorModeValue, useDisclosure
 } from '@chakra-ui/react';
 import AddBar from './AddBar';
@@ -43,9 +43,19 @@ function NavBar(props: NavProps) {
         <Flex flex={{ base: 0 }} justify={{ base: 'center', md: 'start' }} >
           <Text
             textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
+            fontSize={'lg'}
             fontFamily={'heading'}
+            fontWeight={'bold'}
             color={useColorModeValue('gray.800', 'white')}>
-            Logo
+            Over
+          </Text>
+          <Text
+            textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
+            fontFamily={'heading'}
+            fontWeight={'bold'}
+            fontSize={'lg'}
+            color={useColorModeValue('red.400', 'white')}>
+            heard
           </Text>
         </Flex>
         <Flex flex={{ base: 1 }} mx={3} justify={'center'} alignItems={'center'}>
