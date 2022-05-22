@@ -15,6 +15,7 @@ import {
 } from 'react-router-dom';
 import LoginTest from './pages/LoginTest';
 import Playground from './pages/Playground';
+import Profile from './pages/Profile';
 
 
 // Create a client
@@ -38,6 +39,10 @@ ReactDOM.render(
               <Route
                 path='/playground'
                 element={<Playground />}
+              />
+              <Route
+                path='/profile'
+                element={<Profile />}
               />
             </Routes>
           </Router>

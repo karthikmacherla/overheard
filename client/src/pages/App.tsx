@@ -23,14 +23,9 @@ function App() {
     () => get_user_groups(accessToken), { enabled: validUser })
 
   useEffect(() => {
-    const fetchUserData = async (access_token: string) => {
-      if (!access_token && sessionStorage.getItem("access_token") != null) {
-        access_token = sessionStorage.getItem("access_token")!;
-      }
-      setAccessToken(access_token);
-    };
-
-    fetchUserData(accessToken).catch((e) => { console.log(e); });
+    if (!accessToken && sessionStorage.getItem("access_token") != null) {
+      setAccessToken(sessionStorage.getItem("access_token") || accessToken);
+    }
   }, [accessToken]);
 
   useEffect(() => {

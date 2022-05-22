@@ -29,7 +29,7 @@ function RoundButton(props: any) {
 function ButtonWText(props: any) {
   return (
     <Button
-      display={{ base: 'none', md: 'inline-flex' }}
+      display={{ md: 'inline-flex' }}
       fontWeight={600}
       color={'white'}
       bg={'red.400'}
