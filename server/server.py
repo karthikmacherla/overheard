@@ -243,6 +243,14 @@ def list_quotes_for_group(
     return crud.list_quotes_in_group(db, group_id, user)
 
 
+@app.get("/quote/list_by_user", response_model=List[schemas.Quote])
+def list_quotes_for_user(
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    return crud.list_quotes_for_user(db, user)
+
+
 @app.get("/comment/list_by_quote", response_model=List[schemas.Comment])
 def list_comments_for_quote(
     quote_id: int,

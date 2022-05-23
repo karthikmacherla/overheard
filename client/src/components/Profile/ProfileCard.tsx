@@ -5,6 +5,7 @@ import { BiGroup } from 'react-icons/bi';
 import { AiOutlineHeart } from 'react-icons/ai';
 import { IoCalendarClearOutline } from 'react-icons/io5';
 import { ButtonWText } from "../Shared/Buttons";
+import { User } from "../../models";
 
 
 function Stat(props: { icon: IconType, stat: any, description: string }) {
@@ -16,16 +17,16 @@ function Stat(props: { icon: IconType, stat: any, description: string }) {
 }
 
 
-function ProfileCard() {
+function ProfileCard(props: { user?: User, numQuotes: number, numLikes: number }) {
   return <Box>
     <Stack shadow='md' bg={'white'} borderRadius={'md'} maxW='xs' p={5} direction={'column'}>
-      <Avatar name='Dan Abrahmov' src='https://bit.ly/dan-abramov' size={'lg'} />
-      <Heading size='md'>Steve Jobs</Heading>
-      <Text size='sm'>steve@seas.upenn.edu</Text>
+      <Avatar name={props.user?.name} src={props.user?.profile_pic_url || ''} size={'lg'} />
+      <Heading size='md'>{props.user?.name}</Heading>
+      <Text size='sm'>{props.user?.email}</Text>
       <Divider pt={3}></Divider>
-      <Stat icon={BiGroup} stat={2} description={'groups'} />
-      <Stat icon={FiBarChart2} stat={3} description={'quotes made'} />
-      <Stat icon={AiOutlineHeart} stat={'16k'} description={'total likes'} />
+      {/* <Stat icon={BiGroup} stat={props.numGroups} description={'groups'} /> */}
+      <Stat icon={FiBarChart2} stat={props.numQuotes} description={'quotes made'} />
+      <Stat icon={AiOutlineHeart} stat={props.numLikes} description={'total likes'} />
       <Divider pt={3}></Divider>
       <Stat icon={IoCalendarClearOutline} stat={''} description={'Joined 6 months ago'} />
       <ButtonWText>Edit</ButtonWText>

@@ -312,3 +312,12 @@ def list_quotes_in_group(
         .limit(limit)
         .all()
     )
+
+
+def list_quotes_for_user(db: Session, user: models.User, limit: int = 100):
+    return (
+        db.query(models.Quote)
+        .filter(models.Quote.creator_id == user.id)
+        .limit(limit)
+        .all()
+    )

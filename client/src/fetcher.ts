@@ -245,6 +245,25 @@ const get_group_quotes = async (group_id: number, access_token: string): Promise
   return quotes;
 }
 
+const get_user_quotes = async (access_token: string): Promise<Array<Quote>> => {
+  let res = await fetch(`${endpoint}/quote/list_by_user`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  let quotes = await res.json();
+  if (quotes.detail) {
+    throw new Error("Bad params");
+  }
+
+  return quotes;
+}
+
+
 const get_comments_for_quotes = async (quote_id: number, access_token: string): Promise<Array<Comment>> => {
   let res = await fetch(`${endpoint}/comment/list_by_quote?quote_id=${quote_id}`, {
     method: 'GET',
@@ -331,8 +350,9 @@ export {
   join_group,
   create_quote,
   get_group_quotes,
+  get_user_quotes,
   get_user_groups,
   get_users_in_group,
-  remove_user_from_group
+  remove_user_from_group,
 }
 
