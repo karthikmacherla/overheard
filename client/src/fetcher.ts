@@ -326,6 +326,25 @@ const delete_comment = async (comment_id: number, access_token: string): Promise
 }
 
 
+const update_user_details = async (access_token: string, imageFile: any, name: string): Promise<User> => {
+  let body = { imageFile, name };
+  let res = await fetch(`${endpoint}/user/update`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  let user = await res.json();
+  return user;
+}
+
+
+
 function checkAuthorization(res: Response) {
   if (res.status === 401) {
     throw new Error("Bad access token");
@@ -354,5 +373,6 @@ export {
   get_user_groups,
   get_users_in_group,
   remove_user_from_group,
+  update_user_details
 }
 

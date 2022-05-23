@@ -1,11 +1,11 @@
-import { Avatar, Box, Stack, Text, Flex, Heading, Divider, Icon, HStack, Button } from "@chakra-ui/react"
+import { Avatar, Box, Stack, Text, Heading, Divider, Icon, HStack, useDisclosure } from "@chakra-ui/react"
 import { IconType } from "react-icons"
 import { FiBarChart2 } from 'react-icons/fi'
-import { BiGroup } from 'react-icons/bi';
 import { AiOutlineHeart } from 'react-icons/ai';
 import { IoCalendarClearOutline } from 'react-icons/io5';
 import { ButtonWText } from "../Shared/Buttons";
 import { User } from "../../models";
+import UpdateProfileModal from "./UpdateProfileModal";
 
 
 function Stat(props: { icon: IconType, stat: any, description: string }) {
@@ -18,6 +18,9 @@ function Stat(props: { icon: IconType, stat: any, description: string }) {
 
 
 function ProfileCard(props: { user?: User, numQuotes: number, numLikes: number }) {
+  const { isOpen: isEditing, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
+
+
   return <Box>
     <Stack shadow='md' bg={'white'} borderRadius={'md'} maxW='xs' p={5} direction={'column'}>
       <Avatar name={props.user?.name} src={props.user?.profile_pic_url || ''} size={'lg'} />
@@ -29,8 +32,9 @@ function ProfileCard(props: { user?: User, numQuotes: number, numLikes: number }
       <Stat icon={AiOutlineHeart} stat={props.numLikes} description={'total likes'} />
       <Divider pt={3}></Divider>
       <Stat icon={IoCalendarClearOutline} stat={''} description={'Joined 6 months ago'} />
-      <ButtonWText>Edit</ButtonWText>
+      <ButtonWText onClick={onEditOpen}>Edit</ButtonWText>
     </Stack>
+    <UpdateProfileModal isOpen={isEditing} onOpen={onEditOpen} onClose={onEditClose} user={props.user} />
   </Box>
 }
 

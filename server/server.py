@@ -15,6 +15,8 @@ from sqlalchemy.orm import Session
 from config import *
 from auth import *
 from utils import *
+from routers import groups
+
 import crud, models, schemas
 
 
@@ -32,6 +34,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(groups.router)
 
 
 @app.get("/")
@@ -144,74 +148,6 @@ def signup_for_access_token(form_data: UserCreate):
 def read_user(db: Session = Depends(get_db), user=Depends(get_current_user)):
     log.debug(f"type of user: {type(user)}")
     return user
-
-
-@app.post("/group/create", response_model=schemas.Group)
-def create_group(
-    group_info: schemas.GroupCreate,
-    db: Session = Depends(get_db),
-    user: models.User = Depends(get_current_user),
-):
-    db = db.object_session(user)
-    db_group = crud.create_group(db, group_info, user)
-    return db_group
-
-
-@app.post("/group/join", response_model=schemas.Group)
-def join_group(
-    group_info: schemas.GroupInfo,
-    db: Session = Depends(get_db),
-    user: models.User = Depends(get_current_user),
-):
-    res = crud.add_to_group_by_code(db, group_info.group_code, user)
-    if not res:
-        raise HTTPException(
-            status_code=status.HTTP_406_NOT_ACCEPTABLE,
-            detail="Invalid group code",
-        )
-    return res
-
-
-@app.get("/group/list_all", response_model=List[schemas.GroupDetailed])
-def list_group(db: Session = Depends(get_db)):
-    return crud.list_groups(db)
-
-
-@app.get("/group/list_by_user", response_model=List[schemas.GroupDetailed])
-def list_groups_for_user(user=Depends(get_current_user), db: Session = Depends(get_db)):
-    return crud.list_groups_for_user(db, user)
-
-
-@app.post("/group/delete", response_model=bool)
-def delete_group_by_id(group: schemas.GroupID, db: Session = Depends(get_db)):
-    res = crud.delete_group(db, group.id)
-    return res
-
-
-@app.post("/group/remove_user", response_model=bool)
-def remove_user_from_group(
-    user_group: schemas.UserRemove,
-    db: Session = Depends(get_db),
-    user: models.User = Depends(get_current_user),
-):
-    try:
-        res = crud.remove_user_from_group(
-            db, user, user_group.group_id, user_group.user_id
-        )
-        return res
-    except Exception as err:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=err.args)
-
-
-@app.get("/group/users", response_model=List[schemas.User])
-def get_users_in_group(
-    group_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)
-):
-    try:
-        res = crud.list_users_in_group(db, group_id, user)
-        return res
-    except Exception as err:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=err.args)
 
 
 @app.post("/quote/create", response_model=schemas.Quote)

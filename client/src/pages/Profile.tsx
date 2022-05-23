@@ -38,6 +38,7 @@ function Profile() {
   let numLikes = myQuotes?.map((v) => v.likes || 0).reduce((acc, val) => acc + val) || 0;
 
 
+
   const profilePage = (
     <Flex flexDirection={'column'} minH={"100vh"} bg={'gray.300'}>
       <NavBar right={<>
