@@ -1,13 +1,8 @@
-from fastapi import APIRouter
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi.responses import JSONResponse, RedirectResponse
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer
-from fastapi import Request
-from fastapi import Depends
+from fastapi import APIRouter, Depends, status
+from fastapi.exceptions import HTTPException
 
 from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import List
 
 from auth import get_current_user
 from utils import *

@@ -10,7 +10,7 @@ class Config:
     hash_algo: str
     access_token_expire_minutes: str
     database_url: str
-    log_loc: str = "server1.log"
+    log_loc: str = "../server1.log"
 
 
 def get_config():

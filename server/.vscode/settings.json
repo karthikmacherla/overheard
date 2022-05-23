@@ -1,4 +1,8 @@
 {
   "python.linting.pylintEnabled": true,
-  "python.linting.enabled": false
+  "python.linting.enabled": true,
+  "python.linting.pylintArgs": [
+    "--errors-only"
+  ],
+  "python.formatting.provider": "black"
 }

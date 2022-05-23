@@ -7,11 +7,11 @@ RUN pip install "poetry==$POETRY_VERSION"
 
 WORKDIR /app/
 
-COPY pyproject.toml /app/
-COPY poetry.lock /app/
+COPY ../pyproject.toml /app/
+COPY ../poetry.lock /app/
 
 RUN poetry install --no-dev
 
-COPY . /app/
+COPY ../ /app/
 
 CMD ["poetry", "run", "uvicorn", "server:app", "--host", "0.0.0.0", "--root-path", "/api"]
