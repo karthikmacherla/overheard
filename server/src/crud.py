@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
+from fastapi import status
+from fastapi.exceptions import HTTPException
+
 import models
 import schemas
 import random
@@ -42,7 +45,7 @@ def update_group(db: Session, group_info: schemas.GroupCreate):
         return False
 
     group.group_name = group_info.group_name
-    group.description = gorup_info.description
+    group.description = group_info.description
 
     db.commit()
     return True

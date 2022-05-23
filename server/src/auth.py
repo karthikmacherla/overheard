@@ -35,7 +35,7 @@ def authenticate_google_user(
     db: Session, user_id: str, idinfo: GoogleInfo
 ) -> models.User:
     gen_pwd = get_hash_from_str(user_id)
-    user = crud.get_user_by_email(db, username)
+    user = crud.get_user_by_email(db, user_id)
 
     if not user:
         # create the user with idinfo
