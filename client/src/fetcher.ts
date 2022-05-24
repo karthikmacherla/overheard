@@ -326,13 +326,16 @@ const delete_comment = async (comment_id: number, access_token: string): Promise
 }
 
 
-const update_user_details = async (access_token: string, imageFile: any, name: string): Promise<User> => {
-  let body = { imageFile, name };
-  let res = await fetch(`${endpoint}/user/update`, {
+const update_user_details = async (access_token: string, file: File, name: string): Promise<User> => {
+  let body = new FormData();
+  if (file != null)
+    body.append('imageFile', file);
+  body.append('test', 'hi');
+
+  let res = await fetch(`${endpoint}/user/update?name=${name}`, {
     method: 'POST',
-    body: JSON.stringify(body),
+    body: body,
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${access_token}`
     }
   });

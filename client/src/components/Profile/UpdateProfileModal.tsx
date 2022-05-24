@@ -19,10 +19,25 @@ function UpdateProfileModal(props: { isOpen: boolean, onOpen: () => void, onClos
   const queryClient = useQueryClient();
   const joinGroupToast = useToast();
   let access_token = sessionStorage.getItem("access_token") || '';
+  const [file, setFile] = useState(null);
+  const inputFileRef = useRef<any>();
+  const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+
+  const handleImageUpload = (e: any) => {
+    const [file] = e.target.files;
+    if (file) {
+      setFile(file);
+      setImagePreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+
   const updateUserMutation = useMutation(
     (details: UserDetails) => update_user_details(access_token, details.file, details.name),
     {
       onSuccess: () => {
+        setFile(null);
+        setImagePreviewUrl('');
         joinGroupToast({
           title: 'Successfully updated profile!',
           status: 'success',
@@ -34,25 +49,12 @@ function UpdateProfileModal(props: { isOpen: boolean, onOpen: () => void, onClos
       onSettled: () => queryClient.invalidateQueries(['user', access_token])
     })
 
-  const [file, setFile] = useState(null);
-  const inputFileRef = useRef<any>();
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(props.user?.profile_pic_url || '');
-  const handleImageUpload = (e: any) => {
-    const [file] = e.target.files;
-    if (file) {
-      setFile(file);
-      setImagePreviewUrl(URL.createObjectURL(file));
-      console.log(file);
-    }
-  };
-
   const onSubmit = async (e: any) => {
     e.preventDefault();
     let userDetails = {
       file: file,
       name: e.target.name.value,
     }
-
     updateUserMutation.mutate(userDetails);
   }
   const err: any = updateUserMutation.error || {};
@@ -68,8 +70,9 @@ function UpdateProfileModal(props: { isOpen: boolean, onOpen: () => void, onClos
             <form onSubmit={onSubmit}>
               <FormControl isInvalid={updateUserMutation.isError}>
                 <FormLabel htmlFor='avatar'>Avatar</FormLabel>
-                <Avatar size={'lg'} src={imagePreviewUrl} name={props.user?.name} onClick={() => inputFileRef.current.click()} cursor={'pointer'} ></Avatar>
-                <Input id='avatar' type='file' name='name' accept='image/*' multiple={false} onChange={handleImageUpload}
+                <Avatar size={'lg'} src={imagePreviewUrl || props.user?.profile_pic_url} name={props.user?.name}
+                  onClick={() => inputFileRef.current.click()} cursor={'pointer'} ></Avatar>
+                <Input id='avatar' type='file' name='file' accept='image/*' multiple={false} onChange={handleImageUpload}
                   ref={inputFileRef} display={'none'} />
                 <FormHelperText>Click to update picture (jpg/png) </FormHelperText>
                 <FormErrorMessage>An error occurred: {err.message}</FormErrorMessage>
@@ -82,7 +85,11 @@ function UpdateProfileModal(props: { isOpen: boolean, onOpen: () => void, onClos
                 <Button type='submit' colorScheme='blue' mr={3} isLoading={updateUserMutation.isLoading}>
                   Update!
                 </Button>
-                <Button onClick={props.onClose}>Cancel</Button>
+                <Button onClick={() => {
+                  setFile(null);
+                  setImagePreviewUrl('');
+                  props.onClose()
+                }}>Cancel</Button>
               </FormControl>
             </form>
           </ModalBody>

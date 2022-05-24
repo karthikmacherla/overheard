@@ -11,6 +11,7 @@ class Config:
     access_token_expire_minutes: str
     database_url: str
     log_loc: str = "../server1.log"
+    s3_bucket_loc: str
 
 
 def get_config():
@@ -28,5 +29,6 @@ def get_config():
     config_obj.hash_algo = config.get("ALGORITHMS")
     config_obj.access_token_expire_minutes = config.get("ACCESS_TOKEN_EXPIRE_MINUTES")
     config_obj.database_url = config.get("DATABASE_URL")
+    config_obj.s3_bucket_loc = config.get("S3BUCKET_URL")
     config_obj.log_loc = config.get("LOGGER_PATH", config_obj.log_loc)
     return config_obj

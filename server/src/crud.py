@@ -3,6 +3,7 @@ from sqlalchemy.exc import IntegrityError
 
 from fastapi import status
 from fastapi.exceptions import HTTPException
+from typing import Optional
 
 import models
 import schemas
@@ -299,6 +300,19 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     except IntegrityError:
         db.rollback()
         return None
+
+
+def update_user(
+    db: Session, user: models.User, name: Optional[str], profile_pic_url: Optional[str]
+) -> models.User:
+    user = get_user_by_id(db, user.id)
+    if name:
+        user.name = name
+    if profile_pic_url:
+        user.profile_pic_url = profile_pic_url
+    db.commit()
+    db.refresh(user)
+    return user
 
 
 def user_in_group(user: models.User, group_id: int) -> bool:

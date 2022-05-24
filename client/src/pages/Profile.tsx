@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Stack, Wrap, WrapItem } from "@chakra-ui/react";
+import { Box, Button, Flex, Stack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -35,7 +35,7 @@ function Profile() {
   }, [accessToken]);
 
   let numQuotes = myQuotes?.length || 0;
-  let numLikes = myQuotes?.map((v) => v.likes || 0).reduce((acc, val) => acc + val) || 0;
+  let numLikes = myQuotes?.map((v) => v.likes || 0).reduce((acc, val) => acc + val, 0) || 0;
 
 
 

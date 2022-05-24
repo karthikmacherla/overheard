@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import List, Optional
+from fastapi import UploadFile
 
 from datetime import datetime
 from pydantic import BaseModel
@@ -131,3 +132,8 @@ class GoogleInfo(BaseModel):
 class UserRemove(BaseModel):
     user_id: int
     group_id: int
+
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    imageFile: UploadFile | None = None
