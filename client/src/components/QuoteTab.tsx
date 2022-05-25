@@ -4,9 +4,8 @@ import {
   CloseIcon, LinkIcon
 } from '@chakra-ui/icons';
 import {
-  Button,
   Divider,
-  Flex, Grid, GridItem, Heading, Icon, Image
+  Flex, Grid, GridItem, Heading, Icon, Image, useToast
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import {
@@ -64,9 +63,27 @@ function QuoteTab(props: QProps) {
     return () => document.removeEventListener("keydown", handleArrowKeys, false);
   })
 
+  const copyShareToast = useToast()
+
+  const copyShareLink = () => {
+    if (quotes && idx < quotes.length) {
+      const host = process.env.REACT_APP_CLIENT_HOST;
+      const shareLink = `${host}/quote/${quotes[idx].id}`;
+
+      navigator.clipboard.writeText(shareLink);
+      copyShareToast({
+        title: 'Copied to clipboard!',
+        description: `Share link: ${shareLink}`,
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      })
+    }
+  }
+
 
   const CommentButton = () => <RoundButton hoverable={true} onClick={handleClose} ><ChatIcon /></RoundButton>;
-  const ShareButton = () => <RoundButton hoverable={true}  ><LinkIcon /></RoundButton>;
+  const ShareButton = () => <RoundButton hoverable={true}  ><LinkIcon onClick={copyShareLink} /></RoundButton>;
   const LikeButton = () => <RoundButton hoverable={true} ><Icon as={FiHeart} /></RoundButton>;
   const CloseButton = () => <RoundButton hoverable={true} onClick={handleClose}><CloseIcon /></RoundButton>;
 
@@ -83,10 +100,10 @@ function QuoteTab(props: QProps) {
           h={"95%"}
           w={"95%"}
         >
-          <GridItem><Image src={"quotemark.png"} h={"50px"} w={"50px"} /></GridItem>
+          <GridItem><Image src={"/quotemark.png"} h={"50px"} w={"50px"} /></GridItem>
           <GridItem
             colStart={15} rowStart={11}>
-            <Image src={"quotemark.png"} h={"50px"} w={"50px"} ratio={1} transform={"rotate(180deg)"} />
+            <Image src={"/quotemark.png"} h={"50px"} w={"50px"} ratio={1} transform={"rotate(180deg)"} />
           </GridItem>
           <GridItem colStart={3} colEnd={14} rowStart={3} rowEnd={10} >
             <Flex h="100%" flex={{ base: 1 }} justify={'center'} alignItems={'center'}>
@@ -144,6 +161,7 @@ function QuoteTab(props: QProps) {
     )
   }
 }
+
 
 function LeftButton({ handle }: { handle: () => void }) {
   return (

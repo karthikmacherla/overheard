@@ -346,11 +346,35 @@ const update_user_details = async (access_token: string, file: File, name: strin
   return user;
 }
 
+const get_quote = async (access_token: string, quote_id: number): Promise<Quote> => {
+  let res = await fetch(`${endpoint}/quote?id=${quote_id}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  console.log(res.status);
+  console.log(res);
+
+  if (!res.ok) {
+    throw new Error(`Unable to get quote at this time. Please try again later. ${res.statusText}`)
+  }
+
+  if (res.status === 404) {
+    throw new Error("heyoo");
+  }
+
+  let quote = await res.json();
+  return quote;
+}
 
 
 function checkAuthorization(res: Response) {
   if (res.status === 401) {
-    throw new Error("Bad access token");
+    throw new Error("User logged out or does not have permission to fetch this content");
   }
   return;
 }
@@ -376,6 +400,7 @@ export {
   get_user_groups,
   get_users_in_group,
   remove_user_from_group,
-  update_user_details
+  update_user_details,
+  get_quote
 }
 

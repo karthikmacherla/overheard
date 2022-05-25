@@ -1,5 +1,5 @@
 import { ChatIcon, LinkIcon } from "@chakra-ui/icons";
-import { Box, Heading, Wrap, WrapItem, Text, Icon, HStack, Flex, VStack, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react"
+import { Box, Wrap, WrapItem, Text, Icon, HStack, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react"
 import { FiEdit, FiHeart } from "react-icons/fi";
 import { Quote } from "../../models";
 import { RoundButton } from "../Shared/Buttons";

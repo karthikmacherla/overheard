@@ -1,4 +1,5 @@
-import { Button } from "@chakra-ui/react";
+import { IconProps } from "@chakra-ui/icons";
+import { Button, Icon } from "@chakra-ui/react";
 
 function RoundButton(props: any) {
   // const color = useColorModeValue('white', 'white')
@@ -25,6 +26,23 @@ function RoundButton(props: any) {
     </Button>)
 }
 
+interface ClearButtonProps extends IconProps {
+  handle: () => void;
+}
+
+function ClearButton(props: any) {
+  return (
+    <Icon
+      transition={'all .3s ease'}
+      opacity={0}
+      _groupHover={{ opacity: '100%' }}
+      color={'red.400'}
+      w={8}
+      h={8}
+      {...props} />
+  )
+}
+
 
 function ButtonWText(props: any) {
   return (
@@ -43,5 +61,6 @@ function ButtonWText(props: any) {
   )
 }
 
-export { RoundButton, ButtonWText };
+export { RoundButton, ButtonWText, ClearButton };
+export type { ClearButtonProps };
 

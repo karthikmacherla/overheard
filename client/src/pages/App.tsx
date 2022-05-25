@@ -12,7 +12,7 @@ import type { User } from '../models';
 function App() {
   const [accessToken, setAccessToken] = useState('')
   const [groupIdx, setGroupIdx] = useState<number>(-1)
-  const { data: user } = useQuery(['user', accessToken],
+  const { data: user, isLoading: isLoadingUser } = useQuery(['user', accessToken],
     () => get_user_complete(accessToken),
     {
       retry: (count, err: Error) => err.message !== 'Bad access token'
@@ -20,7 +20,7 @@ function App() {
 
   // Don't retry/enable if token is bad
   const validUser = user !== undefined;
-  const { data: groups } = useQuery(['groups', accessToken],
+  const { data: groups, isLoading: isLoadingGroup } = useQuery(['groups', accessToken],
     () => get_user_groups(accessToken), { enabled: validUser })
 
   useEffect(() => {
@@ -53,7 +53,7 @@ function App() {
           <AddBar groups={groups} group_idx={groupIdx} /> : <></>
         } />
 
-      {user && groups ?
+      {isLoadingUser || isLoadingGroup ?
         <Grid
           templateColumns='repeat(7, 1fr)'
           gap={10}
@@ -62,16 +62,32 @@ function App() {
           mx={5}
         >
           <GridItem rounded={'md'} boxShadow="2xl" bg={'white'} h={'xl'} colSpan={2}>
-            <GroupTab groups={groups} idx={groupIdx} setIdx={setGroupIdx} />
           </GridItem>
           <GridItem
             colSpan={5} rounded={'md'} boxShadow="2xl" bg={'white'}
             minW={'2xl'} minH={'lg'} maxH={'xl'}>
-            <QuoteTab group_id={groupIdx} />
           </GridItem>
         </Grid>
         :
-        <Splash handleSignIn={handleSignIn} />
+        user && groups ?
+          <Grid
+            templateColumns='repeat(7, 1fr)'
+            gap={10}
+            p={4}
+            my={5}
+            mx={5}
+          >
+            <GridItem rounded={'md'} boxShadow="2xl" bg={'white'} h={'xl'} colSpan={2}>
+              <GroupTab groups={groups} idx={groupIdx} setIdx={setGroupIdx} />
+            </GridItem>
+            <GridItem
+              colSpan={5} rounded={'md'} boxShadow="2xl" bg={'white'}
+              minW={'2xl'} minH={'lg'} maxH={'xl'}>
+              <QuoteTab group_id={groupIdx} />
+            </GridItem>
+          </Grid>
+          :
+          <Splash handleSignIn={handleSignIn} />
       }
       <ReactQueryDevtools initialIsOpen={false} />
     </Flex>

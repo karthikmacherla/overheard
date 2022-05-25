@@ -16,6 +16,7 @@ import {
 import LoginTest from './pages/LoginTest';
 import Playground from './pages/Playground';
 import Profile from './pages/Profile';
+import QuotePage from './pages/QuotePage';
 
 
 // Create a client
@@ -44,6 +45,7 @@ ReactDOM.render(
                 path='/profile'
                 element={<Profile />}
               />
+              <Route path='/quote/:id' element={<QuotePage />} />
             </Routes>
           </Router>
         </div>

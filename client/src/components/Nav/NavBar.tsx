@@ -2,7 +2,7 @@ import {
   ChevronDownIcon, CloseIcon, HamburgerIcon
 } from '@chakra-ui/icons';
 import {
-  Box, Collapse, Flex, Heading, Icon, IconButton, Link, Stack, Text,
+  Box, Collapse, Flex, Icon, IconButton, Link, Stack, Text,
   useBreakpointValue, useColorModeValue, useDisclosure
 } from '@chakra-ui/react';
 import AddBar from './AddBar';

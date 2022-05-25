@@ -49,3 +49,10 @@ def list_quotes_for_user(
     user=Depends(get_current_user),
 ):
     return crud.list_quotes_for_user(db, user)
+
+
+@router.get("/", response_model=schemas.Quote)
+def get_quote_by_id(
+    id: int, db: Session = Depends(get_db), user=Depends(get_current_user)
+):
+    return crud.get_quote(db, id)
