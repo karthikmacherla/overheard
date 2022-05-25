@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import GroupTab from '../components/GroupTab';
 import { AddBar, LoggedInNav, NavBar, SplashNav } from '../components/Nav/NavBar';
 import QuoteTab from '../components/QuoteTab';
+import Splash from '../components/Splash';
 import { get_user_complete, get_user_groups } from '../fetcher';
 import type { User } from '../models';
 
@@ -51,35 +52,27 @@ function App() {
         addBar={user && groups && groups.length > 0 ?
           <AddBar groups={groups} group_idx={groupIdx} /> : <></>
         } />
-      <Grid
-        templateColumns='repeat(7, 1fr)'
-        gap={10}
-        p={4}
-        my={5}
-        mx={5}
-      >
-        {user && groups ?
-          <>
-            <GridItem rounded={'md'} boxShadow="2xl" bg={'white'} h={'xl'} colSpan={2}>
-              <GroupTab groups={groups} idx={groupIdx} setIdx={setGroupIdx} />
-            </GridItem>
-            <GridItem
-              colSpan={5} rounded={'md'} boxShadow="2xl" bg={'white'}
-              minW={'2xl'} minH={'lg'} maxH={'xl'}>
-              <QuoteTab group_id={groupIdx} />
-            </GridItem>
-          </>
-          :
-          <>
-            <GridItem
-              colStart={2} colSpan={5} rounded={'md'} boxShadow="2xl" bg={'white'}
-              h={'xl'} minW={'2xl'}>
-              <QuoteTab group_id={groupIdx} />
-            </GridItem>
-          </>
-        }
 
-      </Grid>
+      {user && groups ?
+        <Grid
+          templateColumns='repeat(7, 1fr)'
+          gap={10}
+          p={4}
+          my={5}
+          mx={5}
+        >
+          <GridItem rounded={'md'} boxShadow="2xl" bg={'white'} h={'xl'} colSpan={2}>
+            <GroupTab groups={groups} idx={groupIdx} setIdx={setGroupIdx} />
+          </GridItem>
+          <GridItem
+            colSpan={5} rounded={'md'} boxShadow="2xl" bg={'white'}
+            minW={'2xl'} minH={'lg'} maxH={'xl'}>
+            <QuoteTab group_id={groupIdx} />
+          </GridItem>
+        </Grid>
+        :
+        <Splash handleSignIn={handleSignIn} />
+      }
       <ReactQueryDevtools initialIsOpen={false} />
     </Flex>
   );
