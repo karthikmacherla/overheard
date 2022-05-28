@@ -7,6 +7,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { FiMoreVertical, FiTrash, FiUsers } from 'react-icons/fi';
+import Skeleton from 'react-loading-skeleton';
 import { useQueryClient } from 'react-query';
 import { Group, User } from '../models';
 import AddGroupModal from './Group/AddGroupModal';
@@ -24,13 +25,14 @@ interface GProps {
 class GroupTab extends React.Component<GProps, any> {
   render() {
     return (
-      <Flex p={3} h="100%" flex={{ base: 1 }} flexDirection={'column'} >
+      <Flex bg={'white'} p={3} h="100%" minH={'xl'} shadow='md' borderRadius={'md'}
+        flexDirection={'column'} w='100%' minW={{ lg: '2xs', xl: 'xs' }} maxW={'xs'} >
         <Flex alignItems={'center'} >
           <Heading mb={1}>Group</Heading>
           <Spacer />
           <GroupMenu />
         </Flex>
-        <Stack >
+        <Stack>
           {this.props.groups.map((item, i) => {
             return < GroupItemRow key={item.id} group={item} idx={item.id}
               onClick={() => this.props.setIdx(item.id)} />
@@ -119,7 +121,7 @@ const GroupItemMenu = (props: { group: Group }) => {
     })
   }
 
-  return (<Menu>
+  return (<Menu >
     <MenuButton
       as={IconButton}
       aria-label='Options'

@@ -39,25 +39,26 @@ function NavBar(props: NavProps) {
             aria-label={'Toggle Navigation'}
           />
         </Flex>
-
-        <Flex flex={{ base: 0 }} justify={{ base: 'center', md: 'start' }} >
-          <Text
-            textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-            fontSize={'lg'}
-            fontFamily={'heading'}
-            fontWeight={'bold'}
-            color={useColorModeValue('gray.800', 'white')}>
-            Over
-          </Text>
-          <Text
-            textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-            fontFamily={'heading'}
-            fontWeight={'bold'}
-            fontSize={'lg'}
-            color={useColorModeValue('red.400', 'white')}>
-            heard
-          </Text>
-        </Flex>
+        <a href='/'>
+          <Flex flex={{ base: 0 }} justify={{ base: 'center', md: 'start' }} >
+            <Text
+              textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
+              fontSize={'lg'}
+              fontFamily={'heading'}
+              fontWeight={'bold'}
+              color={useColorModeValue('gray.800', 'white')}>
+              Over
+            </Text>
+            <Text
+              textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
+              fontFamily={'heading'}
+              fontWeight={'bold'}
+              fontSize={'lg'}
+              color={useColorModeValue('red.400', 'white')}>
+              heard
+            </Text>
+          </Flex>
+        </a>
         <Flex flex={{ base: 1 }} mx={3} justify={'center'} alignItems={'center'}>
           {props.addBar}
         </Flex>

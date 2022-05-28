@@ -1,13 +1,14 @@
-import { Flex, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Center, Flex, Grid, GridItem, Wrap, WrapItem } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import GroupTab from '../components/GroupTab';
 import { AddBar, LoggedInNav, NavBar, SplashNav } from '../components/Nav/NavBar';
+import QuoteCardLarge from '../components/Quote/QuoteCardLarge';
 import QuoteTab from '../components/QuoteTab';
 import Splash from '../components/Splash';
 import { get_user_complete, get_user_groups } from '../fetcher';
-import type { User } from '../models';
+import type { Group, User } from '../models';
 
 function App() {
   const [accessToken, setAccessToken] = useState('')
@@ -45,53 +46,63 @@ function App() {
     sessionStorage.removeItem("access_token");
   }
 
-  return (
-    <Flex flexDirection={'column'} minH={"100vh"} bg={'gray.300'}>
-      <NavBar right={user ?
-        <LoggedInNav handleSignOut={handleSignOut} /> : <SplashNav handleSignIn={handleSignIn} />}
-        addBar={user && groups && groups.length > 0 ?
-          <AddBar groups={groups} group_idx={groupIdx} /> : <></>
-        } />
+  // App has three components
+  // 1. Group, Quote, Splash
 
-      {isLoadingUser || isLoadingGroup ?
-        <Grid
-          templateColumns='repeat(7, 1fr)'
-          gap={10}
-          p={4}
-          my={5}
-          mx={5}
-        >
-          <GridItem rounded={'md'} boxShadow="2xl" bg={'white'} h={'xl'} colSpan={2}>
-          </GridItem>
-          <GridItem
-            colSpan={5} rounded={'md'} boxShadow="2xl" bg={'white'}
-            minW={'2xl'} minH={'lg'} maxH={'xl'}>
-          </GridItem>
-        </Grid>
-        :
-        user && groups ?
-          <Grid
-            templateColumns='repeat(7, 1fr)'
-            gap={10}
-            p={4}
-            my={5}
-            mx={5}
-          >
-            <GridItem rounded={'md'} boxShadow="2xl" bg={'white'} h={'xl'} colSpan={2}>
-              <GroupTab groups={groups} idx={groupIdx} setIdx={setGroupIdx} />
-            </GridItem>
-            <GridItem
-              colSpan={5} rounded={'md'} boxShadow="2xl" bg={'white'}
-              minW={'2xl'} minH={'lg'} maxH={'xl'}>
-              <QuoteTab group_id={groupIdx} />
-            </GridItem>
-          </Grid>
-          :
-          <Splash handleSignIn={handleSignIn} />
-      }
-      <ReactQueryDevtools initialIsOpen={false} />
+  const splash = <Splash handleSignIn={handleSignIn} />;
+  const loading = <Flex flexDirection={'column'} minH={"100vh"} bg={'gray.300'}>
+    <NavBar right={<LoggedInNav handleSignOut={() => { }} />}
+      addBar={<></>} />
+    <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'center'} flex={1} m={5} >
+      <Flex justifyContent={'center'} display={{ base: 'none', lg: 'flex' }} mr={5} >
+        <GroupTab groups={[]} idx={-1} setIdx={() => { }} ></GroupTab>
+      </Flex>
+      <Flex flex={"1 1 auto"} justifyContent={'center'} maxW={'100%'}>
+        <QuoteCardLarge quote_id={0} firstQuote={true} lastQuote={true} />
+      </Flex>
     </Flex>
-  );
+    <ReactQueryDevtools initialIsOpen={false} />
+  </Flex >
+
+  const main = <Flex flexDirection={'column'} minH={"100vh"} bg={'gray.300'}>
+    <NavBar right={user ?
+      <LoggedInNav handleSignOut={handleSignOut} /> : <SplashNav handleSignIn={handleSignIn} />}
+      addBar={user && groups && groups.length > 0 ?
+        <AddBar groups={groups} group_idx={groupIdx} /> : <></>
+      } />
+
+    <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'center'} flex={1} m={5} >
+      <Flex justifyContent={'center'} display={{ base: 'none', lg: 'flex' }} mr={5} zIndex={1} position={'relative'}>
+        <GroupTab groups={groups || []} idx={groupIdx} setIdx={() => { }} ></GroupTab>
+      </Flex>
+      <Flex flex={"1 1 auto"} justifyContent={'center'} maxW={'100%'} >
+        <QuoteCardLarge quote_id={0} firstQuote={true} lastQuote={true} />
+      </Flex>
+    </Flex>
+
+    <ReactQueryDevtools initialIsOpen={false} />
+  </Flex >;
+
+  return isLoadingUser || isLoadingGroup ?
+    loading : user && groups ?
+      main : splash;
 }
+
+// {/* <Flex flex={"1 1 auto"} flexDir={'row'} m={5} h={'100%'}
+//           bg={'blue'} alignItems={'center'} justifyContent={'center'} >
+//           <Box flex={"0.33 1 auto"} m={3} >
+//             <GroupTab groups={[]} idx={-1} setIdx={() => { }} ></GroupTab>
+//           </Box>
+//           <Box flex={"0.66 1 auto"} m={3} bg={'red'}>
+//             <QuoteCardLarge quote_id={0} firstQuote={false} lastQuote={false}></QuoteCardLarge>
+//           </Box>
+//         </Flex> */}
+
+// {/* <Center h={'100%'} bg={'red'} flex={0.33} p={5}>
+//           <GroupTab groups={[]} idx={-1} setIdx={() => { }} ></GroupTab>
+//         </Center>
+//         <Center bg={'blue'} h={'full'} flex={1}>
+//           <QuoteCardLarge quote_id={0} firstQuote={false} lastQuote={false}></QuoteCardLarge>
+//         </Center> */}
 
 export default App;

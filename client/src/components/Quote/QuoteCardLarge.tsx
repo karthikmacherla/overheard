@@ -41,9 +41,17 @@ function QuoteCardLarge(props: { quote_id: number, quote?: Quote, firstQuote: bo
 
   </Box>
 
-  const quoteCard = (<Box shadow='md' bg={'white'} borderRadius={'md'} p={5} h={1} minH={'xl'} maxH={'95%'} w={'3xl'} maxW={'95%'} position={'relative'} role={'group'}>
-    <Image src={"/quotemark.png"} w={'7%'} h={'auto'} display={'block'} position={'absolute'} />
-    <Image src={"/quotemark.png"} w={'7%'} h={'auto'} display={'block'} position={'absolute'} bottom={3} right={5} transform={"rotate(180deg)"} />
+  const Shell = (props: any) =>
+    <Box shadow='md' bg={'white'} borderRadius={'md'}
+      h={'xl'} minH={'xl'} maxH={'95%'}
+      w={'100%'} minW={{ base: '100%', lg: '2xl', xl: '3xl' }} maxW={'100%'}
+      position={'relative'} role={'group'} {...props}>
+      {props.children}
+    </Box>
+
+  const quoteCard = (<Shell p={5}>
+    <Image src={"/quotemark.png"} w={'7%'} maxW={'50px'} h={'auto'} display={'block'} position={'absolute'} />
+    <Image src={"/quotemark.png"} w={'7%'} maxW={'50px'} h={'auto'} display={'block'} position={'absolute'} bottom={3} right={5} transform={"rotate(180deg)"} />
     <VStack position={'absolute'} right={3}>
       <CommentButton />
       <ShareButton />
@@ -52,15 +60,15 @@ function QuoteCardLarge(props: { quote_id: number, quote?: Quote, firstQuote: bo
     <Flex w={'full'} h={'full'} alignItems={'center'}>
       {props.firstQuote ? <></> : < LeftButton />}
       <Flex flexDirection={'column'} flexGrow={1} alignItems={'center'}>
-        <Heading fontSize={"4vh"} w={"86%"} overflow={'hidden'} textOverflow='ellipsis' textAlign={'center'}>
+        <Heading fontSize={"5vh"} w={"86%"} overflow={'hidden'} textOverflow='ellipsis' textAlign={'center'}>
           {quote?.message}
         </Heading>
       </Flex>
       {props.lastQuote ? <></> : <Flex alignItems={'flex-end'} ><RightButton /></Flex>}
     </Flex>
-  </Box >);
+  </Shell>);
 
-  const commentCard = <Box shadow='md' bg={'white'} borderRadius={'md'} h={1} minH={'xl'} maxH={'95%'} w={'3xl'} maxW={'95%'} position={'relative'}>
+  const commentCard = <Shell>
     <Flex flexDirection={'column'} w={'full'} h={'full'}>
       <Flex justifyContent={'flex-end'} w={'full'}><CloseButton /></Flex>
       <Box flex={"1 1 auto"} h={'full'} ><Comments quote_id={1} /></Box>
@@ -69,7 +77,7 @@ function QuoteCardLarge(props: { quote_id: number, quote?: Quote, firstQuote: bo
         <CommentBar quote_id={3} />
       </Box>
     </Flex >
-  </Box >
+  </Shell>
 
   return err ? errMessage : (showingQuote ? quoteCard : commentCard);
 }
