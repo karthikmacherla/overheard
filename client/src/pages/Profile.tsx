@@ -6,7 +6,7 @@ import { NavBar } from "../components/Nav/NavBar";
 import ProfileCard from "../components/Profile/ProfileCard";
 import { QuoteGrid } from "../components/Profile/QuoteGrid";
 import { ButtonWText } from "../components/Shared/Buttons";
-import { get_user_complete, get_user_quotes } from "../fetcher";
+import { get_user_complete, get_user_metadata } from "../fetcher";
 
 
 function Profile() {
@@ -22,10 +22,10 @@ function Profile() {
       retry: (count, err: Error) => err.message !== 'Bad access token',
     });
 
-  const { data: myQuotes } = useQuery(['myQuotes', accessToken],
-    () => get_user_quotes(accessToken),
+  const { data: user_meta, isLoading: user_meta_loading } = useQuery(['meta', accessToken],
+    () => get_user_metadata(accessToken),
     {
-      retry: (count, err: Error) => err.message !== 'Bad access token'
+      retry: (count, err: Error) => err.message !== 'Bad access token',
     });
 
   useEffect(() => {
@@ -34,9 +34,8 @@ function Profile() {
     }
   }, [accessToken]);
 
-  let numQuotes = myQuotes?.length || 0;
-  let numLikes = myQuotes?.map((v) => v.likes || 0).reduce((acc, val) => acc + val, 0) || 0;
-
+  let numQuotes = user_meta?.quote_count || 0;
+  let numLikes = user_meta?.like_count || 0;
 
 
   const profilePage = (
@@ -47,8 +46,8 @@ function Profile() {
       </>} addBar={<></>} />
 
       <Stack direction='row' m={5} spacing={5}>
-        <ProfileCard user={user} numQuotes={numQuotes} numLikes={numLikes} />
-        <QuoteGrid myQuotes={myQuotes || []} savedQuotes={[]} />
+        <ProfileCard user={user} numQuotes={numQuotes} numLikes={numLikes} loading={user_meta_loading} />
+        <QuoteGrid />
 
       </Stack>
 

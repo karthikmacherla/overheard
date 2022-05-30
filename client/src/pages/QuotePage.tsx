@@ -1,4 +1,4 @@
-import { Box, Center, Flex } from "@chakra-ui/react";
+import { Center, Flex } from "@chakra-ui/react";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { useParams } from "react-router-dom";
 import { AddBar, LoggedInNav, NavBar, SplashNav } from "../components/Nav/NavBar";

@@ -1,4 +1,4 @@
-import { Group, Quote, User, Comment } from './models';
+import { Group, Quote, User, Comment, UserMetadata } from './models';
 
 const host = process.env.REACT_APP_SERVER_HOST;
 const endpoint = `${host}`
@@ -76,6 +76,22 @@ const username_sign_in = async (email: string, password: string) => {
   let access_token = token.access_token;
   let user = await getuser(access_token).then(res => res.json());
   return { access_token, user }
+}
+
+const get_user_metadata = async (access_token: string): Promise<UserMetadata> => {
+  let res = await fetch(`${endpoint}/user/metadata`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  let user = await res.json();
+
+  if (!user.quote_count) {
+    throw new Error('Bad access token');
+  }
+  return user;
 }
 
 // create group
@@ -401,6 +417,8 @@ const toggleLikeQuote = async (access_token: string, quote_id: number, like: boo
 }
 
 
+
+
 function checkAuthorization(res: Response) {
   if (res.status === 401) {
     throw new Error("User logged out or does not have permission to fetch this content");
@@ -427,6 +445,7 @@ export {
   get_group_quotes,
   get_user_quotes,
   get_user_groups,
+  get_user_metadata,
   get_users_in_group,
   remove_user_from_group,
   update_user_details,

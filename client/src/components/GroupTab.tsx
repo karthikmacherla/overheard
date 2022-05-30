@@ -7,7 +7,6 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { FiMoreVertical, FiTrash, FiUsers } from 'react-icons/fi';
-import Skeleton from 'react-loading-skeleton';
 import { useQueryClient } from 'react-query';
 import { Group, User } from '../models';
 import AddGroupModal from './Group/AddGroupModal';

@@ -22,6 +22,7 @@ interface Quote {
   likes?: number,
   comment_count?: number,
   liked_by_user?: boolean,
+  group?: Group
 }
 
 interface Comment {
@@ -33,5 +34,10 @@ interface Comment {
   quote_id: number
 }
 
+interface UserMetadata {
+  like_count: number,
+  quote_count: number
+}
 
-export type { User, Group, Quote, Comment }
+
+export type { User, Group, Quote, Comment, UserMetadata }

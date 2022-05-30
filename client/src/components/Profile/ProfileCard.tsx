@@ -1,4 +1,4 @@
-import { Avatar, Box, Stack, Text, Heading, Divider, Icon, HStack, useDisclosure } from "@chakra-ui/react"
+import { Avatar, Box, Stack, Text, Heading, Divider, Icon, HStack, useDisclosure, SkeletonText } from "@chakra-ui/react"
 import { IconType } from "react-icons"
 import { FiBarChart2 } from 'react-icons/fi'
 import { AiOutlineHeart } from 'react-icons/ai';
@@ -8,16 +8,20 @@ import { User } from "../../models";
 import UpdateProfileModal from "./UpdateProfileModal";
 
 
-function Stat(props: { icon: IconType, stat: any, description: string }) {
+function Stat(props: { icon: IconType, stat: any, description: string, loading: boolean }) {
   return <HStack>
     <Icon as={props.icon} />
-    <Text fontWeight={'bold'}>{props.stat}</Text>
-    <Text fontWeight={'thin'}>{props.description}</Text>
+    {props.loading ? <SkeletonText mt={1} mb={1} noOfLines={1} width={'100%'} /> : <>
+
+      <Text fontWeight={'bold'}>{props.stat}</Text>
+      <Text fontWeight={'thin'}>{props.description}</Text>
+    </>
+    }
   </HStack>
 }
 
 
-function ProfileCard(props: { user?: User, numQuotes: number, numLikes: number }) {
+function ProfileCard(props: { user?: User, numQuotes: number, numLikes: number, loading: boolean }) {
   const { isOpen: isEditing, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
 
 
@@ -28,10 +32,10 @@ function ProfileCard(props: { user?: User, numQuotes: number, numLikes: number }
       <Text size='sm'>{props.user?.email}</Text>
       <Divider pt={3}></Divider>
       {/* <Stat icon={BiGroup} stat={props.numGroups} description={'groups'} /> */}
-      <Stat icon={FiBarChart2} stat={props.numQuotes} description={'quotes made'} />
-      <Stat icon={AiOutlineHeart} stat={props.numLikes} description={'total likes'} />
+      <Stat icon={FiBarChart2} stat={props.numQuotes} description={'quotes made'} loading={props.loading} />
+      <Stat icon={AiOutlineHeart} stat={props.numLikes} description={'total likes'} loading={props.loading} />
       <Divider pt={3}></Divider>
-      <Stat icon={IoCalendarClearOutline} stat={''} description={'Joined 6 months ago'} />
+      <Stat icon={IoCalendarClearOutline} stat={''} description={'Joined 6 months ago'} loading={props.loading} />
       <ButtonWText onClick={onEditOpen}>Edit</ButtonWText>
     </Stack>
     <UpdateProfileModal isOpen={isEditing} onOpen={onEditOpen} onClose={onEditClose} user={props.user} />

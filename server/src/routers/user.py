@@ -44,3 +44,8 @@ async def update_user(
             prof_pic_url = f"https://{config.s3_bucket_loc}.s3.amazonaws.com/{gen_key}"
     user = crud.update_user(db, user, name, prof_pic_url)
     return user
+
+
+@router.get("/metadata", response_model=schemas.UserMetadata)
+def get_metadata(user=Depends(get_current_user), db: Session = Depends(get_db)):
+    return crud.get_user_metadata(db, user)

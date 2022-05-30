@@ -10,6 +10,9 @@ class GroupBase(BaseModel):
     group_name: str
     description: str
 
+    class Config:
+        orm_mode = True
+
 
 class GroupCreate(GroupBase):
     pass
@@ -60,6 +63,11 @@ class User(UserCreate):
         orm_mode = True
 
 
+class UserMetadata(BaseModel):
+    quote_count: int
+    like_count: int
+
+
 class QuoteBase(BaseModel):
     message: str
 
@@ -74,7 +82,7 @@ class Quote(QuoteBase):
     time: datetime
     group_id: int
     creator_id: int
-    creator: User
+    group: GroupBase
 
     class Config:
         orm_mode = True

@@ -1,14 +1,13 @@
-import { Box, Center, Flex, Grid, GridItem, Skeleton, Wrap, WrapItem } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import GroupTab from '../components/GroupTab';
 import { AddBar, LoggedInNav, NavBar, SplashNav } from '../components/Nav/NavBar';
 import QuoteCardLarge from '../components/Quote/QuoteCardLarge';
-import QuoteTab from '../components/QuoteTab';
 import Splash from '../components/Splash';
 import { get_group_quotes, get_user_complete, get_user_groups } from '../fetcher';
-import type { Group, User } from '../models';
+import type { User } from '../models';
 
 function App() {
   const [accessToken, setAccessToken] = useState('')

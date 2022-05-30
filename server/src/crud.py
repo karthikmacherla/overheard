@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError
 
 from fastapi import status
@@ -378,6 +378,16 @@ def update_user(
 def user_in_group(user: models.User, group_id: int) -> bool:
     groups = {g.id for g in user.groups}
     return group_id in groups
+
+
+def get_user_metadata(db: Session, user: models.User):
+    quote_count = (
+        db.query(models.Quote).filter(models.Quote.creator_id == user.id).count()
+    )
+    like_count = (
+        db.query(models.QuoteLike).filter(models.QuoteLike.user_id == user.id).count()
+    )
+    return schemas.UserMetadata(quote_count=quote_count, like_count=like_count)
 
 
 def list_quotes_in_group(
