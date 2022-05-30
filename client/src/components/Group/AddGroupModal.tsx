@@ -65,6 +65,7 @@ function AddGroupModal(props: { isOpen: boolean, onOpen: () => void, onClose: ()
         queryClient.invalidateQueries(['groups', variables?.access_token])
       },
     })
+  const handleClose = () => { props.onClose(); setGroupCode(''); addGroupMutation.reset() }
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
@@ -110,7 +111,7 @@ function AddGroupModal(props: { isOpen: boolean, onOpen: () => void, onClose: ()
                   hidden={addGroupMutation.isSuccess}>
                   Create!
                 </Button>
-                <Button onClick={props.onClose}>Cancel</Button>
+                <Button onClick={handleClose}>Cancel</Button>
               </FormControl>
             </form>
           </ModalBody>

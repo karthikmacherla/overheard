@@ -1,6 +1,6 @@
 import { ChatIcon, LinkIcon, CloseIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { Icon, Box, VStack, Flex, Heading, Divider, Image, Text, Center } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiHeart } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { get_quote } from "../../fetcher";
@@ -8,7 +8,14 @@ import { Quote } from "../../models";
 import { Comments, CommentBar } from "../Comment/Comments";
 import { ClearButton, RoundButton } from "../Shared/Buttons";
 
-function QuoteCardLarge(props: { quote_id: number, quote?: Quote, firstQuote: boolean, lastQuote: boolean }) {
+function QuoteCardLarge(props: {
+  quote_id: number,
+  quote?: Quote,
+  firstQuote: boolean,
+  lastQuote: boolean,
+  prev?: () => void,
+  next?: () => void
+}) {
   const quoteId = props.quote_id;
   const accessToken = sessionStorage.getItem('access_token') || '';
 
@@ -18,12 +25,9 @@ function QuoteCardLarge(props: { quote_id: number, quote?: Quote, firstQuote: bo
     () => get_quote(accessToken, quoteId),
     {
       retry: (count, err: Error) => false,
-      enabled: props.quote == null,
+      enabled: props.quote === null || quoteId !== -1,
       initialData: props.quote,
     });
-
-  console.log(err);
-
   const toggleQuote = () => setShowQuote(!showingQuote);
 
   const CommentButton = () => <RoundButton onClick={toggleQuote}><ChatIcon /><Text fontSize={'xs'} ml={1}>33</Text></RoundButton>;
@@ -31,8 +35,23 @@ function QuoteCardLarge(props: { quote_id: number, quote?: Quote, firstQuote: bo
   const LikeButton = () => <RoundButton ><Icon as={FiHeart} /><Text fontSize={'xs'} ml={1}>{0}</Text></RoundButton>;
   const CloseButton = () => <RoundButton m={2} onClick={toggleQuote}><CloseIcon /></RoundButton>;
 
-  const LeftButton = () => <ClearButton onClick={() => { }} as={ChevronLeftIcon}></ClearButton>
-  const RightButton = () => <ClearButton onClick={() => { }} as={ChevronRightIcon}></ClearButton>
+  const LeftButton = () => <ClearButton onClick={props.prev} as={ChevronLeftIcon}></ClearButton>
+  const RightButton = () => <ClearButton onClick={props.next} as={ChevronRightIcon}></ClearButton>
+
+  const handleArrowKeys = (event: KeyboardEvent) => {
+    if (!showingQuote)
+      return;
+    if (event.key === 'ArrowLeft' && props.prev) {
+      props.prev();
+    } else if (event.key === 'ArrowRight' && props.next) {
+      props.next();
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleArrowKeys, false);
+    return () => document.removeEventListener("keydown", handleArrowKeys, false);
+  })
 
   const errMessage = <Box maxW={'lg'}>
     <Center>
