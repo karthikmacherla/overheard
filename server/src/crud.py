@@ -168,6 +168,36 @@ def get_quote(db: Session, quote_id: int) -> models.Quote:
     return quote
 
 
+def get_quote_detailed(
+    db: Session, quote_id: int, user_id: int
+) -> schemas.QuoteDetailed:
+    quote = db.query(models.Quote).filter(models.Quote.id == quote_id).first()
+    if not quote:
+        return None
+
+    like_count = (
+        db.query(models.QuoteLike).filter(models.QuoteLike.quote_id == quote_id).count()
+    )
+
+    comment_count = (
+        db.query(models.Comment).filter(models.Comment.quote_id == quote_id).count()
+    )
+
+    liked_by_user = (
+        db.query(models.QuoteLike)
+        .filter(
+            models.QuoteLike.quote_id == quote_id
+            and models.QuoteLike.user_id == user_id
+        )
+        .count()
+    )
+
+    quote.likes = like_count
+    quote.comment_count = comment_count
+    quote.liked_by_user = liked_by_user >= 1
+    return quote
+
+
 def update_quote(db: Session, quote_id: int, quote: schemas.QuoteCreate):
     db_quote = get_quote(db, quote_id)
     if not db_quote:
@@ -189,6 +219,36 @@ def delete_quote(db: Session, quote_id: int, user_id: int) -> bool:
     db.delete(db_quote)
     db.commit()
     return True
+
+
+# CRUD Likes
+def like_quote(db: Session, quote_id: int, user_id: int) -> bool:
+    try:
+        db_like = models.QuoteLike(quote_id=quote_id, user_id=user_id)
+        db.add(db_like)
+        db.commit()
+        return True
+    except IntegrityError as err:
+        db.rollback()
+        return False
+
+
+def unlike_quote(db: Session, quote_id: int, user_id: int) -> bool:
+    try:
+        db_like = (
+            db.query(models.QuoteLike)
+            .filter(
+                models.QuoteLike.quote_id == quote_id
+                and models.QuoteLike.user_id == user_id
+            )
+            .first()
+        )
+        db.delete(db_like)
+        db.commit()
+        return True
+    except IntegrityError as err:
+        db.rollback()
+        return False
 
 
 # CRUD comments

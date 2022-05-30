@@ -51,8 +51,27 @@ def list_quotes_for_user(
     return crud.list_quotes_for_user(db, user)
 
 
-@router.get("/", response_model=schemas.Quote)
+@router.get("/", response_model=schemas.QuoteDetailed)
 def get_quote_by_id(
     id: int, db: Session = Depends(get_db), user=Depends(get_current_user)
 ):
-    return crud.get_quote(db, id)
+    return crud.get_quote_detailed(db, id, user.id)
+
+
+@router.get("/metadata", response_model=schemas.QuoteDetailed)
+def get_metadata(
+    id: int, db: Session = Depends(get_db), user=Depends(get_current_user)
+):
+    return crud.get_quote_detailed(db, id, user.id)
+
+
+@router.post("/like", response_model=bool)
+def like_quote(id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    return crud.like_quote(db, id, user.id)
+
+
+@router.post("/unlike", response_model=bool)
+def unlike_quote(
+    id: int, db: Session = Depends(get_db), user=Depends(get_current_user)
+):
+    return crud.unlike_quote(db, id, user.id)

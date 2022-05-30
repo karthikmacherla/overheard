@@ -72,7 +72,6 @@ class QuoteCreate(QuoteBase):
 class Quote(QuoteBase):
     id: int
     time: datetime
-    likes: int
     group_id: int
     creator_id: int
     creator: User
@@ -82,7 +81,9 @@ class Quote(QuoteBase):
 
 
 class QuoteDetailed(Quote):
-    group: Group
+    likes: int
+    comment_count: int
+    liked_by_user: bool
 
     class Config:
         orm_mode = True

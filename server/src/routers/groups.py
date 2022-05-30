@@ -13,6 +13,16 @@ router = APIRouter(
 )
 
 
+@router.get("/", response_model=schemas.GroupDetailed)
+def get_group(
+    id: int,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(get_current_user),
+):
+    group = crud.get_group(db, id)
+    return group
+
+
 @router.post("/create", response_model=schemas.Group)
 def create_group(
     group_info: schemas.GroupCreate,

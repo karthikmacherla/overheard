@@ -1,9 +1,9 @@
 import { ChatIcon, LinkIcon, CloseIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { Icon, Box, VStack, Flex, Heading, Divider, Image, Text, Center } from "@chakra-ui/react";
+import { Icon, Box, VStack, Flex, Heading, Divider, Image, Text, Center, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FiHeart } from "react-icons/fi";
 import { useQuery, useQueryClient } from "react-query";
-import { get_quote } from "../../fetcher";
+import { get_quote, toggleLikeQuote } from "../../fetcher";
 import { Quote, User } from "../../models";
 import { Comments, CommentBar } from "../Comment/Comments";
 import { ClearButton, RoundButton } from "../Shared/Buttons";
@@ -28,14 +28,36 @@ function QuoteCardLarge(props: {
     () => get_quote(accessToken, quoteId),
     {
       retry: (count, err: Error) => false,
-      enabled: props.quote === null || quoteId !== -1,
+      enabled: quoteId !== -1,
       initialData: props.quote,
     });
   const toggleQuote = () => setShowQuote(!showingQuote);
 
-  const CommentButton = () => <RoundButton onClick={toggleQuote}><ChatIcon /><Text fontSize={'xs'} ml={1}>33</Text></RoundButton>;
-  const ShareButton = () => <RoundButton><LinkIcon /><Text fontSize={'xs'} ml={1}>33</Text></RoundButton>;
-  const LikeButton = () => <RoundButton ><Icon as={FiHeart} /><Text fontSize={'xs'} ml={1}>{0}</Text></RoundButton>;
+  const copyShareToast = useToast()
+  const copyShareLink = () => {
+    const host = process.env.REACT_APP_CLIENT_HOST;
+    const shareLink = `${host}/quote/${quote?.id}`;
+
+    navigator.clipboard.writeText(shareLink);
+    copyShareToast({
+      title: 'Copied to clipboard!',
+      description: `Share link: ${shareLink}`,
+      status: 'success',
+      duration: 1000,
+      isClosable: true,
+    })
+  }
+
+  const toggleLike = () => {
+    if (quote) {
+      const toggle = quote?.liked_by_user ? false : true;
+      toggleLikeQuote(accessToken, quote.id, toggle);
+    }
+  }
+
+  const CommentButton = () => <RoundButton onClick={toggleQuote}><ChatIcon /><Text fontSize={'xs'} ml={1}>{quote?.comment_count ? quote?.comment_count : 0}</Text></RoundButton>;
+  const ShareButton = () => <RoundButton onClick={copyShareLink}><LinkIcon /><Text fontSize={'xs'} ml={1}></Text></RoundButton>;
+  const LikeButton = () => <RoundButton onClick={toggleLike} ><Icon as={FiHeart} /><Text fontSize={'xs'} ml={1}>{quote?.likes ? quote?.likes : 0}</Text></RoundButton>;
   const CloseButton = () => <RoundButton m={2} onClick={toggleQuote}><CloseIcon /></RoundButton>;
 
   const LeftButton = () => <ClearButton onClick={props.prev} as={ChevronLeftIcon}></ClearButton>
@@ -76,8 +98,8 @@ function QuoteCardLarge(props: {
     <Image src={"/quotemark.png"} w={'7%'} maxW={'50px'} h={'auto'} display={'block'} position={'absolute'} bottom={3} right={5} transform={"rotate(180deg)"} />
     <VStack position={'absolute'} right={3}>
       <CommentButton />
-      <ShareButton />
       <LikeButton />
+      <ShareButton />
     </VStack>
     <Flex w={'full'} h={'full'} alignItems={'center'}>
       {props.firstQuote ? <></> : < LeftButton />}

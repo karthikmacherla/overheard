@@ -111,21 +111,4 @@ function App() {
       main : splash;
 }
 
-// {/* <Flex flex={"1 1 auto"} flexDir={'row'} m={5} h={'100%'}
-//           bg={'blue'} alignItems={'center'} justifyContent={'center'} >
-//           <Box flex={"0.33 1 auto"} m={3} >
-//             <GroupTab groups={[]} idx={-1} setIdx={() => { }} ></GroupTab>
-//           </Box>
-//           <Box flex={"0.66 1 auto"} m={3} bg={'red'}>
-//             <QuoteCardLarge quote_id={0} firstQuote={false} lastQuote={false}></QuoteCardLarge>
-//           </Box>
-//         </Flex> */}
-
-// {/* <Center h={'100%'} bg={'red'} flex={0.33} p={5}>
-//           <GroupTab groups={[]} idx={-1} setIdx={() => { }} ></GroupTab>
-//         </Center>
-//         <Center bg={'blue'} h={'full'} flex={1}>
-//           <QuoteCardLarge quote_id={0} firstQuote={false} lastQuote={false}></QuoteCardLarge>
-//         </Center> */}
-
 export default App;

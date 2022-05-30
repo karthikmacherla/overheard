@@ -371,6 +371,35 @@ const get_quote = async (access_token: string, quote_id: number): Promise<Quote>
   return quote;
 }
 
+const toggleLikeQuote = async (access_token: string, quote_id: number, like: boolean): Promise<boolean> => {
+  var url = like ? `${endpoint}/quote/like?id=${quote_id}` : `${endpoint}/quote/unlike?id=${quote_id}`;
+
+  let res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  console.log(res.status);
+  console.log(res);
+
+
+  if (!res.ok) {
+    throw new Error(`Unable to get quote at this time. Please try again later. ${res.statusText}`)
+  }
+
+  if (res.status === 404) {
+    throw new Error("Not found");
+  }
+
+  let confirm = await res.json();
+
+  return confirm;
+}
+
 
 function checkAuthorization(res: Response) {
   if (res.status === 401) {
@@ -401,6 +430,7 @@ export {
   get_users_in_group,
   remove_user_from_group,
   update_user_details,
+  toggleLikeQuote,
   get_quote
 }
 

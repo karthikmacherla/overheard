@@ -20,6 +20,8 @@ interface Quote {
   share_link?: URL | string,
   time?: string,
   likes?: number,
+  comment_count?: number,
+  liked_by_user?: boolean,
 }
 
 interface Comment {

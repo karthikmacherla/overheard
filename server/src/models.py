@@ -38,7 +38,6 @@ class Quote(Base):
     id = Column(Integer, primary_key=True, index=True)
     message = Column(String)
     time = Column(DateTime, index=True)
-    likes = Column(Integer, index=True)
 
     group_id = Column(Integer, ForeignKey("groups.id"))
     group = relationship("Group")
@@ -46,6 +45,12 @@ class Quote(Base):
     creator_id = Column(Integer, ForeignKey("users.id"))
     creator = relationship("User")
     # TOOD: geohash
+
+
+class QuoteLike(Base):
+    __tablename__ = "quotes_likes"
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    quote_id = Column(Integer, ForeignKey("quotes.id"), primary_key=True)
 
 
 class Comment(Base):
