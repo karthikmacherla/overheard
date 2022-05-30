@@ -9,6 +9,7 @@ from fastapi import FastAPI
 from config import get_config
 from utils import create_logger
 from routers import groups, comments, quotes, auth, user
+from database import engine
 
 import models
 
@@ -16,12 +17,6 @@ log = create_logger(__name__)
 config = get_config()
 
 # set up database
-engine = create_engine(
-    config.database_url or "sqlite:///./sql_test_app.db",
-    connect_args={"check_same_thread": False},
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
 models.Base.metadata.create_all(bind=engine)
 
 # set up app

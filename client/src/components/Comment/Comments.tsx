@@ -37,7 +37,7 @@ function Comments(props: { quote_id: number }) {
   </>
 }
 
-function CommentBar(props: { quote_id: number }) {
+function CommentBar(props: { quote_id: number, profile_pic_src?: string, profile_name?: string }) {
   const accessToken = sessionStorage.getItem('access_token') || '';
   const queryClient = useQueryClient();
 
@@ -98,7 +98,7 @@ function CommentBar(props: { quote_id: number }) {
         width={"100%"}
         alignItems={'center'}
         m={1}>
-        <Avatar name={"John"} src='#' m={3} size={'sm'} />
+        <Avatar name={props.profile_name} src={props.profile_pic_src} m={3} size={'sm'} />
         <InputGroup mt={3} mb={3} >
           <Input variant='unstyled' size={'lg'} type='text' name='comment'
             placeholder='insert comment here'

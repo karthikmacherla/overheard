@@ -37,8 +37,8 @@ jobs:
           poetry install
       - name: Run backend tests
         run: |
-          cd server
-          poetry run python test_crud.py
+          cd server/src/
+          poetry run python test.py
 
   build-backend:
     # Name the Job

@@ -2,9 +2,9 @@ import { ChatIcon, LinkIcon, CloseIcon, ChevronLeftIcon, ChevronRightIcon } from
 import { Icon, Box, VStack, Flex, Heading, Divider, Image, Text, Center } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FiHeart } from "react-icons/fi";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { get_quote } from "../../fetcher";
-import { Quote } from "../../models";
+import { Quote, User } from "../../models";
 import { Comments, CommentBar } from "../Comment/Comments";
 import { ClearButton, RoundButton } from "../Shared/Buttons";
 
@@ -20,6 +20,9 @@ function QuoteCardLarge(props: {
   const accessToken = sessionStorage.getItem('access_token') || '';
 
   const [showingQuote, setShowQuote] = useState(true);
+
+  const queryClient = useQueryClient();
+  const currUser = queryClient.getQueryData<User>(['user', accessToken]);
 
   const { data: quote, error: err }: { data: Quote | undefined, error: Error | null } = useQuery(['quote', accessToken, quoteId],
     () => get_quote(accessToken, quoteId),
@@ -90,10 +93,11 @@ function QuoteCardLarge(props: {
   const commentCard = <Shell>
     <Flex flexDirection={'column'} w={'full'} h={'full'}>
       <Flex justifyContent={'flex-end'} w={'full'}><CloseButton /></Flex>
-      <Box flex={"1 1 auto"} h={'full'} ><Comments quote_id={1} /></Box>
-      <Box>
+      <Box flex={"1 1 auto"} h={'full'} overflow={'scroll'}><Comments quote_id={quoteId} /></Box>
+      <Box >
         <Divider />
-        <CommentBar quote_id={3} />
+        <CommentBar quote_id={quoteId} profile_name={currUser?.name}
+          profile_pic_src={currUser?.profile_pic_url} />
       </Box>
     </Flex >
   </Shell>

@@ -52,3 +52,7 @@ def get_db():
         return db
     finally:
         db.close()
+
+
+def set_up_database():
+    models.Base.metadata.create_all(bind=engine)

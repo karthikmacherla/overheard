@@ -1,9 +1,8 @@
 import unittest
 
-import src.crud as crud
-import src.schemas as schemas
-
-from src.utils import *
+import schemas
+import crud
+from utils import *
 
 
 class TestUser(unittest.TestCase):
