@@ -198,12 +198,12 @@ def get_quote_detailed(
     return quote
 
 
-def update_quote(db: Session, quote_id: int, quote: schemas.QuoteCreate):
+def update_quote(db: Session, quote_id: int, message: string, user: models.User):
     db_quote = get_quote(db, quote_id)
-    if not db_quote:
+    if not db_quote or db_quote.creator_id != user.id:
         return False
 
-    db_quote.message = quote.message
+    db_quote.message = message
     db.commit()
     return True
 

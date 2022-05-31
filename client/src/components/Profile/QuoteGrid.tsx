@@ -1,10 +1,11 @@
 import { ChatIcon, LinkIcon } from "@chakra-ui/icons";
-import { Box, Wrap, WrapItem, Text, Icon, HStack, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react"
+import { Box, Wrap, WrapItem, Text, Icon, HStack, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, useDisclosure } from "@chakra-ui/react"
 import { useEffect, useState } from "react";
 import { FiEdit, FiHeart } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { get_quote, get_user_quotes } from "../../fetcher";
 import { Quote } from "../../models";
+import EditQuoteModal from "../Quote/EditQuoteModal";
 import { RoundButton } from "../Shared/Buttons";
 
 function QuoteCard(props: { quote: Quote }) {
@@ -15,11 +16,12 @@ function QuoteCard(props: { quote: Quote }) {
       retry: (count, err: Error) => false,
       initialData: props.quote,
     });
+  const { isOpen: isEditing, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
 
   const CommentButton = () => <RoundButton><ChatIcon /><Text fontSize={'xs'} ml={2}>{quote?.comment_count}</Text></RoundButton>;
   const ShareButton = () => <RoundButton><LinkIcon /></RoundButton>;
   const LikeButton = () => <RoundButton ><Icon as={FiHeart} /><Text fontSize={'xs'} ml={2}>{quote?.likes}</Text></RoundButton>;
-  const EditButton = () => <RoundButton ><Icon as={FiEdit} /></RoundButton>;
+  const EditButton = () => <RoundButton onClick={onEditOpen}><Icon as={FiEdit} /></RoundButton>;
 
   return <Flex flexDirection={'column'} shadow='md' bg={'white'} borderRadius={'lg'} p={5} h={250} maxW={'md'}>
     <Box>
@@ -32,6 +34,8 @@ function QuoteCard(props: { quote: Quote }) {
       <LikeButton />
       <EditButton />
     </HStack>
+    <EditQuoteModal isOpen={isEditing} onOpen={onEditOpen} onClose={onEditClose}
+      quote_id={quote?.id || -1} curr_message={quote?.message || ''} />
   </Flex>
 }
 

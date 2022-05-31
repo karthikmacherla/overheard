@@ -75,3 +75,13 @@ def unlike_quote(
     id: int, db: Session = Depends(get_db), user=Depends(get_current_user)
 ):
     return crud.unlike_quote(db, id, user.id)
+
+
+@router.post("/update", response_model=bool)
+def update_quote(
+    id: int,
+    message: str,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    return crud.update_quote(db, id, message, user)

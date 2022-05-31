@@ -443,6 +443,29 @@ const toggleLikeQuote = async (access_token: string, quote_id: number, like: boo
   return confirm;
 }
 
+const update_quote = async (access_token: string, message: string, quote_id: number): Promise<boolean> => {
+  let res = await fetch(`${endpoint}/quote/update?id=${quote_id}&message=${message}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  if (!res.ok) {
+    throw new Error(`Unable to get quote at this time. Please try again later.`)
+  }
+
+  let confirm = await res.json();
+
+  if (!confirm) {
+    throw new Error('Quote failed to update. Please retry request');
+  }
+
+  return confirm;
+}
+
 
 
 
@@ -471,6 +494,7 @@ export {
   create_quote,
   get_group_quotes,
   get_user_quotes,
+  update_quote,
   get_user_groups,
   get_user_metadata,
   get_users_in_group,
