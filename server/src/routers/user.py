@@ -46,6 +46,15 @@ async def update_user(
     return user
 
 
+@router.post("/password", response_model=bool)
+def change_password(
+    passwordInfo: schemas.UserPassword,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return crud.change_password(db, user, passwordInfo)
+
+
 @router.get("/metadata", response_model=schemas.UserMetadata)
 def get_metadata(user=Depends(get_current_user), db: Session = Depends(get_db)):
     return crud.get_user_metadata(db, user)

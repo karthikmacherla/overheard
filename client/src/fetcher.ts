@@ -362,6 +362,33 @@ const update_user_details = async (access_token: string, file: File, name: strin
   return user;
 }
 
+const update_user_password = async (access_token: string, oldPassword: string, newPassword: string): Promise<boolean> => {
+  let body = { oldPassword, newPassword };
+
+  let res = await fetch(`${endpoint}/user/password`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+
+  checkAuthorization(res);
+
+  if (!res.ok) {
+    throw new Error("trouble making request at this time");
+  }
+
+  let result = await res.json();
+
+  if (!result) {
+    throw new Error("incorrect old password");
+  }
+
+  return result;
+}
+
 const get_quote = async (access_token: string, quote_id: number): Promise<Quote> => {
   let res = await fetch(`${endpoint}/quote?id=${quote_id}`, {
     method: 'GET',
@@ -448,6 +475,7 @@ export {
   get_user_metadata,
   get_users_in_group,
   remove_user_from_group,
+  update_user_password,
   update_user_details,
   toggleLikeQuote,
   get_quote

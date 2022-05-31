@@ -17,7 +17,7 @@ type UserDetails = {
 
 function UpdateProfileModal(props: { isOpen: boolean, onOpen: () => void, onClose: () => void, user?: User }) {
   const queryClient = useQueryClient();
-  const joinGroupToast = useToast();
+  const updateProfileToast = useToast();
   let access_token = sessionStorage.getItem("access_token") || '';
   const [file, setFile] = useState(null);
   const inputFileRef = useRef<any>();
@@ -38,7 +38,7 @@ function UpdateProfileModal(props: { isOpen: boolean, onOpen: () => void, onClos
       onSuccess: () => {
         setFile(null);
         setImagePreviewUrl('');
-        joinGroupToast({
+        updateProfileToast({
           title: 'Successfully updated profile!',
           status: 'success',
           duration: 9000,
@@ -76,12 +76,15 @@ function UpdateProfileModal(props: { isOpen: boolean, onOpen: () => void, onClos
                   ref={inputFileRef} display={'none'} />
                 <FormHelperText>Click to update picture (jpg/png) </FormHelperText>
                 <FormErrorMessage>An error occurred: {err.message}</FormErrorMessage>
-                <br />
+              </FormControl>
+              <br />
+              <FormControl>
                 <FormLabel htmlFor='name'>Name</FormLabel>
-                <Input id='name' type='text' name='name' placeholder={props.user?.name} />
-                <FormHelperText>Your full name</FormHelperText>
+                <Input id='name' type='text' name='name' placeholder={props.user?.name} /><br />
                 <FormErrorMessage>An error occurred: {err.message}</FormErrorMessage>
-                <br />
+              </FormControl>
+              <br />
+              <FormControl>
                 <Button type='submit' colorScheme='blue' mr={3} isLoading={updateUserMutation.isLoading}>
                   Update!
                 </Button>

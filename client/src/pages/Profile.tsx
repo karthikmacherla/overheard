@@ -48,7 +48,6 @@ function Profile() {
       <Stack direction='row' m={5} spacing={5}>
         <ProfileCard user={user} numQuotes={numQuotes} numLikes={numLikes} loading={user_meta_loading} />
         <QuoteGrid />
-
       </Stack>
 
       <ReactQueryDevtools initialIsOpen={false} />

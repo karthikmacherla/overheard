@@ -146,3 +146,8 @@ class UserRemove(BaseModel):
 class UserUpdate(BaseModel):
     name: Optional[str] = None
     imageFile: UploadFile | None = None
+
+
+class UserPassword(BaseModel):
+    oldPassword: str
+    newPassword: str

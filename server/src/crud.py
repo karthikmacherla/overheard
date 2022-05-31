@@ -10,7 +10,7 @@ import schemas
 import random
 import string
 from datetime import datetime
-from utils import get_hash_from_str, create_logger
+from utils import get_hash_from_str, create_logger, verify_password
 
 logger = create_logger(__name__)
 
@@ -408,3 +408,14 @@ def list_quotes_for_user(db: Session, user: models.User, limit: int = 100):
         .limit(limit)
         .all()
     )
+
+
+def change_password(db: Session, user: models.User, passwordInfo: schemas.UserPassword):
+    # check if old is correct
+    if verify_password(passwordInfo.oldPassword, user.password):
+        user = get_user_by_id(db, user.id)
+        user.password = get_hash_from_str(passwordInfo.newPassword)
+        db.commit()
+        return True
+    else:
+        return False

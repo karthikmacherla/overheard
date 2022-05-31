@@ -2,10 +2,12 @@ import { Avatar, Box, Stack, Text, Heading, Divider, Icon, HStack, useDisclosure
 import { IconType } from "react-icons"
 import { FiBarChart2 } from 'react-icons/fi'
 import { AiOutlineHeart } from 'react-icons/ai';
+import { BsLockFill } from 'react-icons/bs';
 import { IoCalendarClearOutline } from 'react-icons/io5';
 import { ButtonWText } from "../Shared/Buttons";
 import { User } from "../../models";
 import UpdateProfileModal from "./UpdateProfileModal";
+import UpdateProfilePasswordModal from "./UpdateProfilePasswordModal";
 
 
 function Stat(props: { icon: IconType, stat: any, description: string, loading: boolean }) {
@@ -23,6 +25,7 @@ function Stat(props: { icon: IconType, stat: any, description: string, loading: 
 
 function ProfileCard(props: { user?: User, numQuotes: number, numLikes: number, loading: boolean }) {
   const { isOpen: isEditing, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
+  const { isOpen: isPass, onOpen: onPassOpen, onClose: onPassClose } = useDisclosure();
 
 
   return <Box>
@@ -37,8 +40,11 @@ function ProfileCard(props: { user?: User, numQuotes: number, numLikes: number, 
       <Divider pt={3}></Divider>
       <Stat icon={IoCalendarClearOutline} stat={''} description={'Joined 6 months ago'} loading={props.loading} />
       <ButtonWText onClick={onEditOpen}>Edit</ButtonWText>
+      <ButtonWText onClick={onEditOpen} bg={'blue.400'} _hover={{ bg: 'blue.300' }} leftIcon={<BsLockFill />}>Change Password</ButtonWText>
     </Stack>
     <UpdateProfileModal isOpen={isEditing} onOpen={onEditOpen} onClose={onEditClose} user={props.user} />
+    <UpdateProfilePasswordModal isOpen={isPass} onOpen={onPassOpen} onClose={onPassClose} user={props.user} />
+
   </Box>
 }
 
