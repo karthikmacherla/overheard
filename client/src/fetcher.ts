@@ -1,11 +1,15 @@
-import { Group, Quote, User, Comment, UserMetadata } from './models';
+import { Comment, Group, Quote, User, UserMetadata } from './models';
 
 const host = process.env.REACT_APP_SERVER_HOST;
 const endpoint = `${host}`
 
+const google_client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
+
 console.log("hi this worked");
 console.log(`endpoint ${endpoint}`);
 console.log(process.env);
+console.log(`google ${google_client_id}`);
 
 
 const signup = async (email: string, name: string, password: string) => {
@@ -74,8 +78,24 @@ const username_sign_in = async (email: string, password: string) => {
   }
 
   let access_token = token.access_token;
-  let user = await getuser(access_token).then(res => res.json());
-  return { access_token, user }
+  return { access_token }
+}
+
+const google_sign_in = async (google_access_token: string) => {
+  let res = await fetch(`${endpoint}/auth/google?google_access_token=${google_access_token}`, {
+    method: 'POST'
+  });
+
+  if (!res.ok) {
+    let err = await res.json();
+    throw new Error(err.detail);
+  }
+
+  let token = await res.json();
+  let access_token = token.access_token;
+
+  return { access_token }
+
 }
 
 const get_user_metadata = async (access_token: string): Promise<UserMetadata> => {
@@ -234,6 +254,16 @@ const create_quote = async (quote: string, group_id: number, access_token: strin
   return await fetch(`${endpoint}/quote/create`, {
     method: 'POST',
     body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+}
+
+const delete_quote = async (access_token: string, quote_id: number) => {
+  return await fetch(`${endpoint}/quote/delete?quote_id=${quote_id}`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${access_token}`
@@ -483,6 +513,7 @@ function checkAuthorization(res: Response) {
 export {
   signup,
   getuser,
+  google_sign_in,
   delete_group,
   delete_comment,
   create_comment,
@@ -492,6 +523,7 @@ export {
   create_group,
   join_group,
   create_quote,
+  delete_quote,
   get_group_quotes,
   get_user_quotes,
   update_quote,
@@ -503,5 +535,5 @@ export {
   update_user_details,
   toggleLikeQuote,
   get_quote
-}
+};
 

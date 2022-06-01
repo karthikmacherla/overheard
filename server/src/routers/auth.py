@@ -7,6 +7,7 @@ from fastapi.exceptions import HTTPException
 from fastapi import Depends, APIRouter, status
 
 from google.oauth2 import id_token
+from google_auth_oauthlib import flow
 from google.auth.transport import requests
 
 from config import get_config
@@ -20,6 +21,7 @@ from utils import get_db, create_logger
 
 import crud
 import schemas
+import requests
 
 
 router = APIRouter(prefix="/auth")
@@ -28,25 +30,41 @@ config = get_config()
 log = create_logger(__name__)
 
 
+# from_client_secrets_file(
+#     CLIENT_SECRETS_FILE, scopes=SCOPES, state=state
+# )
+
+
 @router.post("/google")
-def google_login_for_access_token(token: str):
+def google_login_for_access_token(google_access_token: str):
     # attempt to decode
     try:
-        # Specify the CLIENT_ID of the router that accesses the backend:
-
-        idinfo = id_token.verify_oauth2_token(
-            token, requests.Request(), config.google_client_id
+        # NEW: get info by making a request using the access_token they gave you
+        resp = requests.get(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            headers={"Authorization": f"Bearer {google_access_token}"},
         )
 
-        userid = idinfo["sub"]
+        if resp.status_code != 200:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid google access token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        idinfo = resp.json()
+
+        log.info(idinfo)
+
+        userid = idinfo["email"]
         idinfo = schemas.GoogleInfo(
             name=idinfo["name"],
             picture=idinfo["picture"],
             given_name=idinfo["given_name"],
+            family_name=idinfo["family_name"],
+            sub=idinfo["sub"],
             email=idinfo["email"],
         )
-
-        log.info(idinfo)
 
         user = authenticate_google_user(get_db(), userid, idinfo)
 
@@ -67,6 +85,7 @@ def google_login_for_access_token(token: str):
         )
     except ValueError as p:
         # Invalid token
+        log.error(p)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid Authentication",

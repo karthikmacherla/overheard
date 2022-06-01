@@ -85,3 +85,10 @@ def update_quote(
     user=Depends(get_current_user),
 ):
     return crud.update_quote(db, id, message, user)
+
+
+@router.post("/delete", response_model=bool)
+def delete_quote(
+    quote_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)
+):
+    return crud.delete_quote(db, quote_id, user.id)

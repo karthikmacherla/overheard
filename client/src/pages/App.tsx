@@ -7,7 +7,6 @@ import { AddBar, LoggedInNav, NavBar, SplashNav } from '../components/Nav/NavBar
 import QuoteCardLarge from '../components/Quote/QuoteCardLarge';
 import Splash from '../components/Splash';
 import { get_group_quotes, get_user_complete, get_user_groups } from '../fetcher';
-import type { User } from '../models';
 
 function App() {
   const [accessToken, setAccessToken] = useState('')
@@ -43,7 +42,7 @@ function App() {
     }
   }, [accessToken]);
 
-  const handleSignIn = (currUser: User, access_token: string) => {
+  const handleSignIn = (access_token: string) => {
     sessionStorage.setItem("access_token", access_token);
     setAccessToken(access_token);
   }
@@ -63,7 +62,6 @@ function App() {
       setQuoteIdx(quoteIdx + 1);
     }
   }
-
   // App has three components
   // 1. Group, Quote, Splash
 

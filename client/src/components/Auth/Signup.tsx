@@ -6,14 +6,14 @@ import {
   ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, useDisclosure
 } from '@chakra-ui/react';
+import { useGoogleLogin } from '@react-oauth/google';
 import React, { useState } from 'react';
 import { FaGoogle } from 'react-icons/fa';
-import { getuser, signup } from '../../fetcher';
-import { User } from '../../models';
+import { google_sign_in, signup } from '../../fetcher';
 import { ButtonWText } from '../Shared/Buttons';
 
 
-function SignupButton(props: { handleSignIn: (u: User, s: string) => void }) {
+function SignupButton(props: { handleSignIn: (access_token: string) => void }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [error, setError] = useState('');
 
@@ -31,13 +31,21 @@ function SignupButton(props: { handleSignIn: (u: User, s: string) => void }) {
 
     try {
       let res = await signup(email, name, pass).then(res => res.json());
-      let user = await getuser(res.access_token).then(res => res.json());
-      props.handleSignIn(user, res.access_token);
+      props.handleSignIn(res.access_token);
       handleExit();
     } catch (error: any) {
       setError(error.message);
     }
   }
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: tokenResponse => {
+      const google_access_token = tokenResponse.access_token;
+      google_sign_in(google_access_token)
+        .then(res => props.handleSignIn(res.access_token))
+        .catch(e => setError(e.message))
+    },
+  })
 
   const handleExit = () => {
     setError("");
@@ -64,7 +72,7 @@ function SignupButton(props: { handleSignIn: (u: User, s: string) => void }) {
                 <FormLabel htmlFor='login-password-conf'>Confirm Password</FormLabel>
                 <Input id='login-password-conf' type='password' name='confpassword' />
                 <FormErrorMessage>{error}</FormErrorMessage>
-                <Button colorScheme={'blue'} my={5} leftIcon={<FaGoogle />}>Sign up with Google</Button>
+                <Button colorScheme={'blue'} my={5} leftIcon={<FaGoogle />} onClick={() => handleGoogleLogin()}>Sign up with Google</Button>
                 <br />
                 <ButtonWText type='submit' mr={3}>
                   Sign up!

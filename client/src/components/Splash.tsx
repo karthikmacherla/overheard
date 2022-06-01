@@ -1,16 +1,11 @@
 // import Head from 'next/head';
 import {
-  Box,
-  Heading,
-  Container,
-  Text,
-  Stack,
+  Box, Container, Heading, Stack, Text
 } from '@chakra-ui/react';
-import { User } from '../models';
 import LoginButton from './Auth/Login';
 import SignupButton from './Auth/Signup';
 
-export default function Splash(props: { handleSignIn: (user: User, access_token: string) => void }) {
+export default function Splash(props: { handleSignIn: (access_token: string) => void }) {
   return (
     <>
 

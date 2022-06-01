@@ -150,7 +150,6 @@ def create_quote(db: Session, quote: schemas.QuoteCreate, user_id: int):
             group_id=quote.group_id,
             creator_id=user_id,
             time=datetime.now(),
-            likes=0,
         )
         db.add(db_quote)
         db.commit()

@@ -1,25 +1,20 @@
 import {
-  Button, FormControl, FormErrorMessage, FormLabel,
-  Input, Modal, ModalBody,
+  Button, FormControl, FormErrorMessage, FormLabel, Modal, ModalBody,
   ModalCloseButton, ModalContent,
-  ModalHeader, ModalOverlay, Textarea, useToast,
+  ModalHeader, ModalOverlay, Textarea, useDisclosure, useToast
 } from '@chakra-ui/react';
-import { useState } from 'react';
 import { BsTrash } from 'react-icons/bs';
 import { useMutation, useQueryClient } from 'react-query';
 import { update_quote } from '../../fetcher';
-import { User } from '../../models';
-
-interface EditQuoteInfo {
-  quote_id: number
-  message: string,
-}
+import DeleteQuoteModal from './DeleteQuoteModal';
 
 
 function EditQuoteModal(props: { isOpen: boolean, onOpen: () => void, onClose: () => void, quote_id: number, curr_message: string }) {
   const editQuoteToast = useToast();
   const queryClient = useQueryClient();
   let access_token = sessionStorage.getItem("access_token") || '';
+  const deleteModalState = useDisclosure();
+
   let quote_id = props.quote_id;
 
   const editQuoteMutation = useMutation(
@@ -61,7 +56,7 @@ function EditQuoteModal(props: { isOpen: boolean, onOpen: () => void, onClose: (
                 <Button type='submit' colorScheme='blue' mr={3} isLoading={editQuoteMutation.isLoading}>
                   Update!
                 </Button>
-                <Button colorScheme='red' mr={3} leftIcon={<BsTrash />} isLoading={editQuoteMutation.isLoading}>
+                <Button colorScheme='red' mr={3} leftIcon={<BsTrash />} onClick={deleteModalState.onOpen} >
                   Delete
                 </Button>
                 <Button onClick={() => {
@@ -73,6 +68,7 @@ function EditQuoteModal(props: { isOpen: boolean, onOpen: () => void, onClose: (
           </ModalBody>
         </ModalContent>
       </Modal>
+      <DeleteQuoteModal quote_id={quote_id} modalState={deleteModalState} ></DeleteQuoteModal>
     </>
   )
 }

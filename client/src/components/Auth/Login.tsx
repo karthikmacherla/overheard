@@ -8,12 +8,12 @@ import {
   ModalHeader, ModalOverlay, useColorModeValue, useDisclosure
 } from '@chakra-ui/react';
 import { FaGoogle } from 'react-icons/fa';
-import { User } from '../../models';
 import { ButtonWText } from '../Shared/Buttons';
-import { username_sign_in } from '../../fetcher';
+import { google_sign_in, username_sign_in } from '../../fetcher';
+import { useGoogleLogin } from '@react-oauth/google';
 
 
-function LoginButton(props: { handleSignIn: (u: User, s: string) => void }) {
+function LoginButton(props: { handleSignIn: (access_token: string) => void }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [error, setError] = useState('');
 
@@ -26,8 +26,7 @@ function LoginButton(props: { handleSignIn: (u: User, s: string) => void }) {
       if (res.error) {
         setError(res.error);
       } else {
-        let user: User = res.user;
-        props.handleSignIn(user, res.access_token);
+        props.handleSignIn(res.access_token);
         handleExit();
       }
     } catch (err: any) {
@@ -39,6 +38,15 @@ function LoginButton(props: { handleSignIn: (u: User, s: string) => void }) {
     setError("");
     onClose();
   }
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: tokenResponse => {
+      const google_access_token = tokenResponse.access_token;
+      google_sign_in(google_access_token)
+        .then(res => props.handleSignIn(res.access_token))
+        .catch(e => setError(e.message))
+    },
+  })
 
   return (
     <>
@@ -69,7 +77,7 @@ function LoginButton(props: { handleSignIn: (u: User, s: string) => void }) {
                 <FormLabel htmlFor='password'>Password</FormLabel>
                 <Input id='login-password' type='password' name='password' />
                 <FormErrorMessage>{error}</FormErrorMessage>
-                <Button colorScheme={'blue'} my={5} leftIcon={<FaGoogle />}>Sign in with Google</Button>
+                <Button colorScheme={'blue'} my={5} leftIcon={<FaGoogle />} onClick={() => handleGoogleLogin()}>Sign in with Google</Button>
                 <br />
                 <ButtonWText type='submit' mr={3}>Log In</ButtonWText>
                 <Button onClick={handleExit}>Cancel</Button>

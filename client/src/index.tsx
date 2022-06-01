@@ -17,40 +17,44 @@ import LoginTest from './pages/LoginTest';
 import Playground from './pages/Playground';
 import Profile from './pages/Profile';
 import QuotePage from './pages/QuotePage';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
 // Create a client
 const queryClient = new QueryClient()
+const google_client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
 
 ReactDOM.render(
   <ChakraProvider>
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <div>
-          <Router>
-            <Routes>
-              <Route
-                path="/"
-                element={<App />}
-              />
-              <Route
-                path="/login"
-                element={<LoginTest />}
-              />
-              <Route
-                path='/playground'
-                element={<Playground />}
-              />
-              <Route
-                path='/profile'
-                element={<Profile />}
-              />
-              <Route path='/quote/:id' element={<QuotePage />} />
-            </Routes>
-          </Router>
-        </div>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <GoogleOAuthProvider clientId={google_client_id}>
+      <React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <div>
+            <Router>
+              <Routes>
+                <Route
+                  path="/"
+                  element={<App />}
+                />
+                <Route
+                  path="/login"
+                  element={<LoginTest />}
+                />
+                <Route
+                  path='/playground'
+                  element={<Playground />}
+                />
+                <Route
+                  path='/profile'
+                  element={<Profile />}
+                />
+                <Route path='/quote/:id' element={<QuotePage />} />
+              </Routes>
+            </Router>
+          </div>
+        </QueryClientProvider>
+      </React.StrictMode>
+    </GoogleOAuthProvider>
   </ChakraProvider>,
   document.getElementById('root')
 );
