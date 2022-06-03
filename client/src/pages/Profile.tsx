@@ -7,14 +7,17 @@ import ProfileCard from "../components/Profile/ProfileCard";
 import { QuoteGrid } from "../components/Profile/QuoteGrid";
 import { ButtonWText } from "../components/Shared/Buttons";
 import { get_user_complete, get_user_metadata } from "../fetcher";
-
+import { useNavigate } from 'react-router-dom';
 
 function Profile() {
   const [accessToken, setAccessToken] = useState('');
+  const navigate = useNavigate();
+
   const handleSignOut = () => {
     setAccessToken('');
     sessionStorage.removeItem("access_token");
     // Try to redirect here
+    navigate('/');
   }
   const { data: user } = useQuery(['user', accessToken],
     () => get_user_complete(accessToken),
