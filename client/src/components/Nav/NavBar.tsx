@@ -59,8 +59,10 @@ function NavBar(props: NavProps) {
             </Text>
           </Flex>
         </a>
-        <Flex flex={{ base: 1 }} mx={3} justify={'center'} alignItems={'center'}>
-          {props.addBar}
+        <Flex flex='1' mx={3} justify={'center'} alignItems={'center'}>
+          <Box display={{ base: 'none', lg: 'block' }}>
+            {props.addBar}
+          </Box>
         </Flex>
         <Stack
           flex={{ base: 1, md: 0 }}

@@ -1,7 +1,10 @@
-import { Flex } from '@chakra-ui/react';
+import { HamburgerIcon, AddIcon, ExternalLinkIcon, RepeatIcon, EditIcon } from '@chakra-ui/icons';
+import { Box, Center, Flex, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import { BsThreeDotsVertical } from 'react-icons/bs';
 import { useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import GroupButton from '../components/Group/GroupButton';
 import GroupTab from '../components/GroupTab';
 import { AddBar, LoggedInNav, NavBar, SplashNav } from '../components/Nav/NavBar';
 import QuoteCardLarge from '../components/Quote/QuoteCardLarge';
@@ -84,10 +87,13 @@ function App() {
     <NavBar right={user ?
       <LoggedInNav handleSignOut={handleSignOut} /> : <SplashNav handleSignIn={handleSignIn} />}
       addBar={user && groups && groups.length > 0 ?
-        <AddBar groups={groups} group_idx={groupId} /> : <></>
+        <AddBar groups={groups || []} group_idx={groupId} /> : <></>
       } />
-
-    <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'center'} flex={1} m={5} >
+    <Flex mr={5} ml={5} mt={5} display={{ base: 'flex', lg: 'none' }}>
+      <GroupButton groups={groups || []} id={groupId} setId={setGroupId} ></GroupButton>
+      <AddBar groups={groups || []} group_idx={groupId} />
+    </Flex>
+    <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'center'} flex={1} m={5} mt={0} >
       <Flex justifyContent={'center'} display={{ base: 'none', lg: 'flex' }} mr={5} zIndex={1} position={'relative'}>
         <GroupTab groups={groups || []} idx={groupId} setIdx={setGroupId} ></GroupTab>
       </Flex>

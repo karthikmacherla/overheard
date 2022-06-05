@@ -73,16 +73,20 @@ function AddBar(props: { groups: Array<Group>, group_idx: number }) {
       <Button
         onClick={onOpen}
         display={'flex'}
-        w={"500px"}
-        mx={3}
+        flexGrow={{ base: 1, lg: 0 }}
+        w={{ lg: "500px" }}
+        ml={3}
         bg={'white'}
         alignItems={'center'}
+        justifyContent={'left'}
         leftIcon={<AddIcon />}
         colorScheme='white'
         textColor={'gray.400'}
         rounded={'md'}
         boxShadow={'md'}
-        variant='solid'>
+        variant='solid'
+        overflow={'hidden'} textOverflow='ellipsis'
+      >
         Add a new quote to {currGroup.group_name}
       </Button>
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
