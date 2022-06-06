@@ -1,12 +1,20 @@
 import { ChatIcon, LinkIcon, CloseIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { Icon, Box, VStack, Flex, Heading, Divider, Image, Text, Center, useToast } from "@chakra-ui/react";
+import { Icon, Box, VStack, Flex, Heading, Image, Text, Center, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FiHeart } from "react-icons/fi";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { get_quote, toggleLikeQuote } from "../../fetcher";
-import { Quote, User } from "../../models";
-import { Comments, CommentBar } from "../Comment/Comments";
+import { Quote } from "../../models";
 import { ClearButton, RoundButton } from "../Shared/Buttons";
+
+
+const Shell = (props: any) =>
+  <Box shadow='md' bg={'white'} borderRadius={'md'}
+    h={'xl'} minH={'xl'} maxH={'95%'}
+    w={'100%'} minW={{ base: '100%', lg: '2xl', xl: '3xl' }} maxW={'100%'}
+    position={'relative'} role={'group'} {...props}>
+    {props.children}
+  </Box>
 
 function QuoteCardLarge(props: {
   quote_id: number,
@@ -14,16 +22,14 @@ function QuoteCardLarge(props: {
   firstQuote: boolean,
   lastQuote: boolean,
   prev?: () => void,
-  next?: () => void
+  next?: () => void,
+  commentCard: JSX.Element
 }) {
   const quoteId = props.quote_id;
-  const accessToken = sessionStorage.getItem('access_token') || '';
 
   const [showingQuote, setShowQuote] = useState(true);
 
-  const queryClient = useQueryClient();
-  const currUser = queryClient.getQueryData<User>(['user', accessToken]);
-
+  const accessToken = sessionStorage.getItem('access_token') || '';
   const { data: quote, error: err }: { data: Quote | undefined, error: Error | null } = useQuery(['quote', accessToken, quoteId],
     () => get_quote(accessToken, quoteId),
     {
@@ -85,14 +91,6 @@ function QuoteCardLarge(props: {
 
   </Box>
 
-  const Shell = (props: any) =>
-    <Box shadow='md' bg={'white'} borderRadius={'md'}
-      h={'xl'} minH={'xl'} maxH={'95%'}
-      w={'100%'} minW={{ base: '100%', lg: '2xl', xl: '3xl' }} maxW={'100%'}
-      position={'relative'} role={'group'} {...props}>
-      {props.children}
-    </Box>
-
   const quoteCard = (<Shell p={5}>
     <Image src={"/quotemark.png"} w={'7%'} maxW={'50px'} h={'auto'} display={'block'} position={'absolute'} />
     <Image src={"/quotemark.png"} w={'7%'} maxW={'50px'} h={'auto'} display={'block'} position={'absolute'} bottom={3} right={5} transform={"rotate(180deg)"} />
@@ -115,12 +113,7 @@ function QuoteCardLarge(props: {
   const commentCard = <Shell>
     <Flex flexDirection={'column'} w={'full'} h={'full'}>
       <Flex justifyContent={'flex-end'} w={'full'}><CloseButton /></Flex>
-      <Box flex={"1 1 auto"} h={'full'} overflow={'scroll'}><Comments quote_id={quoteId} /></Box>
-      <Box >
-        <Divider />
-        <CommentBar quote_id={quoteId} profile_name={currUser?.name}
-          profile_pic_src={currUser?.profile_pic_url} />
-      </Box>
+      {props.commentCard}
     </Flex >
   </Shell>
 

@@ -1,9 +1,8 @@
-import { HamburgerIcon, AddIcon, ExternalLinkIcon, RepeatIcon, EditIcon } from '@chakra-ui/icons';
-import { Box, Center, Flex, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { BsThreeDotsVertical } from 'react-icons/bs';
 import { useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import CommentCard from '../components/Comment/CommentCard';
 import GroupButton from '../components/Group/GroupButton';
 import GroupTab from '../components/GroupTab';
 import { AddBar, LoggedInNav, NavBar, SplashNav } from '../components/Nav/NavBar';
@@ -17,7 +16,7 @@ function App() {
   const { data: user, isLoading: isLoadingUser } = useQuery(['user', accessToken],
     () => get_user_complete(accessToken),
     {
-      retry: (count, err: Error) => err.message !== 'Bad access token'
+      retry: false
     });
 
   // Don't retry/enable if token is bad
@@ -37,6 +36,7 @@ function App() {
     () => get_group_quotes(groupId, accessToken),
     {
       enabled: groups && groupId !== -1,
+      refetchInterval: 1000
     })
 
   useEffect(() => {
@@ -65,8 +65,16 @@ function App() {
       setQuoteIdx(quoteIdx + 1);
     }
   }
+
+  const quoteId = quotes && quoteIdx < quotes.length ? quotes[quoteIdx].id : -1;
+  const commentCard = <CommentCard quoteId={quoteId}
+    prof_name={user?.name}
+    prof_pic_src={user?.profile_pic_url} />
+
+
   // App has three components
   // 1. Group, Quote, Splash
+  const probsUser = sessionStorage.getItem("access_token") !== null;
 
   const splash = <Splash handleSignIn={handleSignIn} />;
   const loading = <Flex flexDirection={'column'} minH={"100vh"} bg={'gray.300'}>
@@ -77,7 +85,7 @@ function App() {
         <GroupTab groups={[]} idx={-1} setIdx={() => { }} ></GroupTab>
       </Flex>
       <Flex flex={"1 1 auto"} justifyContent={'center'} maxW={'100%'}>
-        <QuoteCardLarge quote_id={0} firstQuote={true} lastQuote={true} />
+        <QuoteCardLarge quote_id={0} firstQuote={true} lastQuote={true} commentCard={<></>} />
       </Flex>
     </Flex>
     <ReactQueryDevtools initialIsOpen={false} />
@@ -103,15 +111,19 @@ function App() {
           quote={quotes ? quotes[quoteIdx] : undefined}
           prev={prevQuoteSlide}
           next={nextQuoteSlide}
-          firstQuote={quoteIdx <= 0} lastQuote={quotes === undefined || quoteIdx >= quotes.length - 1} />
+          firstQuote={quoteIdx <= 0}
+          lastQuote={quotes === undefined || quoteIdx >= quotes.length - 1}
+          commentCard={commentCard} />
       </Flex>
     </Flex>
     <ReactQueryDevtools initialIsOpen={false} />
   </Flex >;
 
-  return isLoadingUser || isLoadingGroup ?
-    loading : user && groups ?
-      main : splash;
+  if (!probsUser)
+    return splash;
+
+  return isLoadingUser || isLoadingGroup ? loading :
+    user && groups ? main : splash;
 }
 
 export default App;

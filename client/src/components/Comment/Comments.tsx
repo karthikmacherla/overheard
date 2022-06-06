@@ -25,7 +25,8 @@ function Comments(props: { quote_id: number }) {
     () => get_comments_for_quotes(quote_id, accessToken),
     {
       retry: (count, err: Error) => err.message !== 'Bad access token',
-      enabled: accessToken !== ''
+      enabled: accessToken !== '',
+      refetchInterval: 1000,
     });
 
   return <>

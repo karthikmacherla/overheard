@@ -1,4 +1,4 @@
-import { Icon, ExternalLinkIcon, StarIcon } from "@chakra-ui/icons";
+import { Icon, StarIcon } from "@chakra-ui/icons";
 import { Menu, MenuButton, IconButton, MenuList, MenuItem, MenuGroup } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { Group } from "../../models";

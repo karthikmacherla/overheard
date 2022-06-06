@@ -23,15 +23,12 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 // Create a client
 const google_client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
 
-const twentyFourHoursInMs = 1000 * 60 * 60 * 24;
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // refetchOnWindowFocus: false,
-      // refetchOnMount: false,
-      // refetchOnReconnect: false,
-      // retry: false,
-      // staleTime: twentyFourHoursInMs,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+      refetchOnReconnect: false,
     },
   },
 });
