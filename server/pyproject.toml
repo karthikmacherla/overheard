@@ -20,6 +20,7 @@ python-dotenv = "^0.20.0"
 autoflake = "^1.4"
 boto3 = "^1.23.6"
 google-auth-oauthlib = "^0.5.1"
+mysqlclient = "^2.1.0"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^22.1.0", allow-prereleases = true}

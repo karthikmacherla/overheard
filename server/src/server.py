@@ -17,7 +17,7 @@ log = create_logger(__name__)
 config = get_config()
 
 # set up database
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)
 
 # set up app
 app = FastAPI()

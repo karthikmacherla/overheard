@@ -21,7 +21,7 @@ function AddBar(props: { groups: Array<Group>, group_idx: number }) {
   const [quoteCode] = useState("");
 
   const currGroup = props.groups.reduce(
-    (prev, curr) => curr.id === props.group_idx ? curr : prev)
+    (prev, curr) => curr.id === props.group_idx ? curr : prev);
 
   const addQuoteMutation = useMutation(
     (newQuote: CreateQuote) => create_quote(newQuote.quote, newQuote.group_id, newQuote.access_token),

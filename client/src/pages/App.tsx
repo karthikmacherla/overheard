@@ -35,8 +35,8 @@ function App() {
   const { data: quotes } = useQuery(['quotes', accessToken, groupId],
     () => get_group_quotes(groupId, accessToken),
     {
-      enabled: groups && groupId !== -1,
-      refetchInterval: 1000
+      enabled: accessToken !== '' && groupId !== -1,
+      refetchInterval: 10000
     })
 
   useEffect(() => {
@@ -76,7 +76,7 @@ function App() {
   // 1. Group, Quote, Splash
   const probsUser = sessionStorage.getItem("access_token") !== null;
 
-  const splash = <Splash handleSignIn={handleSignIn} />;
+  const splash = <><Splash handleSignIn={handleSignIn} /><ReactQueryDevtools initialIsOpen={false} /></>;
   const loading = <Flex flexDirection={'column'} minH={"100vh"} bg={'gray.300'}>
     <NavBar right={<LoggedInNav handleSignOut={() => { }} />}
       addBar={<></>} />
@@ -85,7 +85,7 @@ function App() {
         <GroupTab groups={[]} idx={-1} setIdx={() => { }} ></GroupTab>
       </Flex>
       <Flex flex={"1 1 auto"} justifyContent={'center'} maxW={'100%'}>
-        <QuoteCardLarge quote_id={0} firstQuote={true} lastQuote={true} commentCard={<></>} />
+        <QuoteCardLarge quote_id={-1} firstQuote={true} lastQuote={true} commentCard={<></>} />
       </Flex>
     </Flex>
     <ReactQueryDevtools initialIsOpen={false} />
@@ -95,11 +95,13 @@ function App() {
     <NavBar right={user ?
       <LoggedInNav handleSignOut={handleSignOut} /> : <SplashNav handleSignIn={handleSignIn} />}
       addBar={user && groups && groups.length > 0 ?
-        <AddBar groups={groups || []} group_idx={groupId} /> : <></>
+        <AddBar groups={groups} group_idx={groupId} /> : <></>
       } />
     <Flex mr={5} ml={5} mt={5} display={{ base: 'flex', lg: 'none' }}>
       <GroupButton groups={groups || []} id={groupId} setId={setGroupId} ></GroupButton>
-      <AddBar groups={groups || []} group_idx={groupId} />
+      {user && groups && groups.length > 0 ?
+        <AddBar groups={groups} group_idx={groupId} /> : <></>
+      }
     </Flex>
     <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'center'} flex={1} m={5} mt={0} >
       <Flex justifyContent={'center'} display={{ base: 'none', lg: 'flex' }} mr={5} zIndex={1} position={'relative'}>
